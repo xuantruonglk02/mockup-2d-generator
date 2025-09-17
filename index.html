@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Mockup Generator</title>
+
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+            crossorigin="anonymous"
+        />
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+            crossorigin="anonymous"
+        ></script>
+
+        <script src="./mockupInfos.js"></script>
+        <script src="./Mockup2DGenerator.js"></script>
+
+        <style>
+            .mockup_img {
+                width: 500px;
+                height: 500px;
+            }
+            
+            .upload-area {
+                border: 2px dashed #dee2e6;
+                border-radius: 0.375rem;
+                padding: 2rem;
+                text-align: center;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                background-color: #f8f9fa;
+            }
+            
+            .upload-area:hover {
+                border-color: #0d6efd;
+                background-color: #e7f1ff;
+            }
+            
+            .upload-area.dragover {
+                border-color: #0d6efd;
+                background-color: #e7f1ff;
+                transform: scale(1.02);
+            }
+            
+            .upload-area-small {
+                padding: 1rem;
+                font-size: 0.875rem;
+            }
+            
+            .artwork-preview {
+                max-width: 200px;
+                max-height: 200px;
+                object-fit: contain;
+                border: 1px solid #dee2e6;
+                border-radius: 0.375rem;
+            }
+            
+            .heather-preview {
+                max-width: 100px;
+                max-height: 100px;
+                object-fit: contain;
+                border: 1px solid #dee2e6;
+                border-radius: 0.375rem;
+            }
+            
+            .upload-icon {
+                font-size: 3rem;
+                color: #6c757d;
+                margin-bottom: 1rem;
+            }
+            
+            .upload-icon-small {
+                font-size: 2rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .loading {
+                position: absolute;
+                left: 50%;
+            }
+            
+            .artwork-section {
+                border-top: 1px solid #dee2e6;
+                padding-top: 1rem;
+                margin-top: 1rem;
+            }
+            
+            .color-section {
+                border-top: 1px solid #dee2e6;
+                padding-top: 1rem;
+                margin-top: 1rem;
+            }
+            
+            .heather-section {
+                border-top: 1px solid #dee2e6;
+                padding-top: 1rem;
+                margin-top: 1rem;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container-fluid p-3">
+            <div id="loading" class="alert alert-info loading" style="display: none">
+                <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                Generating mockups...
+            </div>
+            <div id="error" class="alert alert-danger" style="display: none"></div>
+            <div class="row">
+                <div id="mockup_displayer" class="d-flex flex-wrap gap-3 col-9"></div>
+                <div class="column col-3">
+                    <!-- Mockup Selection -->
+                    <div class="mb-4">
+                        <label for="mockup_select" class="form-label">Select Mockup</label>
+                        <select id="mockup_select" class="form-select"></select>
+                        <small class="form-text text-muted">Choose the mockup you want to use</small>
+                    </div>
+                    
+                    <!-- Artwork Upload Section -->
+                    <div class="artwork-section mb-4">
+                        <h5>Upload Artwork</h5>
+                        <div id="upload_area" class="upload-area mb-3">
+                            <div class="upload-icon">📎</div>
+                            <p class="mb-2"><strong>Drop your artwork here</strong></p>
+                            <p class="text-muted small">or click to browse</p>
+                            <input type="file" id="artwork_input" accept="image/*" style="display: none;">
+                        </div>
+                        <div id="artwork_preview_container" style="display: none;">
+                            <img id="artwork_preview" class="artwork-preview mb-2" alt="Artwork preview">
+                            <div>
+                                <button id="remove_artwork" class="btn btn-sm btn-outline-danger">Remove</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Color Selection -->
+                    <div class="color-section mb-3">
+                        <h5>Base Color</h5>
+                        <div class="d-flex gap-2 mb-2">
+                            <input type="color" id="color" name="color" value="#ffffff" class="form-control form-control-color" />
+                            <input type="text" id="color_code" name="color" value="#ffffff" class="form-control" />
+                        </div>
+                    </div>
+                    
+                    <!-- Heather Effect Section -->
+                    <div class="heather-section">
+                        <h5>Heather Effect</h5>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="apply_heather" name="apply_heather">
+                                <label class="form-check-label" for="apply_heather">
+                                    Apply heather effect
+                                </label>
+                            </div>
+                            <small class="form-text text-muted">Adds a textured, vintage effect to the mockup</small>
+                        </div>
+                        
+                        <!-- Custom Heather Upload -->
+                        <div id="heather_upload_section" style="display: none;">
+                            <h6>Custom Heather Texture</h6>
+                            <div id="heather_upload_area" class="upload-area upload-area-small mb-3">
+                                <div class="upload-icon upload-icon-small">🎨</div>
+                                <p class="mb-1"><strong>Upload heather texture</strong></p>
+                                <p class="text-muted small">PNG/JPG texture image</p>
+                                <input type="file" id="heather_input" accept="image/*" style="display: none;">
+                            </div>
+                            <div id="heather_preview_container" style="display: none;">
+                                <img id="heather_preview" class="heather-preview mb-2" alt="Heather texture preview">
+                                <div>
+                                    <button id="remove_heather" class="btn btn-sm btn-outline-danger">Use Default</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            let mockupDisplayer = null
+            let loadingEl = null
+            let errorEl = null
+            let mockupSelect = null
+            let colorInput = null
+            let colorCodeInput = null
+            let uploadArea = null
+            let artworkInput = null
+            let artworkPreview = null
+            let artworkPreviewContainer = null
+            let removeArtworkBtn = null
+            let applyHeatherCheckbox = null
+            let heatherUploadSection = null
+            let heatherUploadArea = null
+            let heatherInput = null
+            let heatherPreview = null
+            let heatherPreviewContainer = null
+            let removeHeatherBtn = null
+
+            let mockupInfos = null
+            let selectedMockupId = null
+            let availableMockups = []
+            let artworkUrl = './artwork.png'
+            let color = '#ffffff'
+            let artwork = null
+            let applyHeather = false
+            let customHeatherImage = null
+
+            let isRendering = false
+
+            const loadAvailableMockups = async () => {
+                availableMockups = getAvailableMockups()
+                
+                // Clear existing options
+                mockupSelect.innerHTML = ''
+                
+                if (availableMockups.length === 0) {
+                    mockupSelect.innerHTML = '<option value="">No mockups available</option>'
+                    return
+                }
+
+                // Add available mockups
+                availableMockups.forEach(mockupId => {
+                    const option = document.createElement('option')
+                    option.value = mockupId
+                    option.textContent = mockupId
+                    mockupSelect.appendChild(option)
+                })
+
+                const defaultMockup = availableMockups[0]
+                if (defaultMockup) {
+                    mockupSelect.value = defaultMockup
+                    selectedMockupId = defaultMockup
+                    loadMockupInfosToGenerator(defaultMockup)
+                }
+            }
+
+            const loadMockupInfosToGenerator = (mockupId) => {
+                try {
+                    mockupInfos = loadMockupInfos(mockupId)
+                    const mockup2DGenerator = getMockup2DGeneratorInstance()
+                    if (mockup2DGenerator) {
+                        mockup2DGenerator.loadMockupInfos(mockupInfos)
+                    }
+                } catch (error) {
+                    console.error(`Failed to load mockup infos for ${mockupId}:`, error)
+                    errorEl.style.display = 'block'
+                    errorEl.textContent = `Error loading mockup ${mockupId}: ${error.message}`
+                }
+            }
+
+            const render = async () => {
+                try {
+                    if (!mockupDisplayer || !artwork || !mockupInfos || !color || !selectedMockupId) return
+
+                    const mockup2DGenerator = getMockup2DGeneratorInstance()
+                    if (!mockup2DGenerator) {
+                        throw new Error('Failed to get Mockup2DGenerator instance')
+                    }
+
+                    loadingEl.style.display = 'block'
+                    isRendering = true
+                    errorEl.style.display = 'none'
+
+                    // Pass the custom heather image if available
+                    const mockups = await mockup2DGenerator.render(artwork, color, applyHeather ? (customHeatherImage || 'default') : null)
+                    if (!mockups || mockups.length === 0) {
+                        throw new Error('No mockups were generated')
+                    }
+
+                    removeAllChildNodes(mockupDisplayer)
+
+                    mockups.forEach((url, index) => {
+                        const img = document.createElement('img')
+                        img.src = url
+                        img.className = 'mockup_img card-img-top'
+                        img.style.objectFit = 'contain'
+
+                        img.onerror = () => {
+                            console.error(`Failed to load mockup image: ${url}`)
+                            img.alt = 'Failed to load image'
+                            img.className += ' border border-danger'
+                        }
+
+                        mockupDisplayer.appendChild(img)
+                    })
+                } catch (error) {
+                    errorEl.style.display = 'block'
+                    errorEl.textContent = `Error: ${error.message}`
+                    console.error('Mockup generation failed:', error)
+                } finally {
+                    loadingEl.style.display = 'none'
+                    isRendering = false
+                }
+            }
+
+            const loadArtworkFromFile = async (file) => {
+                try {
+                    if (!file.type.startsWith('image/')) {
+                        throw new Error('Please select a valid image file')
+                    }
+
+                    const mockup2DGenerator = getMockup2DGeneratorInstance()
+                    if (!mockup2DGenerator) {
+                        throw new Error('Failed to get Mockup2DGenerator instance')
+                    }
+
+                    // Create preview
+                    const previewUrl = URL.createObjectURL(file)
+                    artworkPreview.src = previewUrl
+                    artworkPreviewContainer.style.display = 'block'
+                    uploadArea.style.display = 'none'
+
+                    // Load artwork for mockup generation
+                    artwork = await mockup2DGenerator._loadImage(previewUrl, null, true)
+                    
+                    // Auto-render if not already rendering
+                    if (!isRendering) {
+                        await render()
+                    }
+
+                } catch (error) {
+                    errorEl.style.display = 'block'
+                    errorEl.textContent = `Error loading artwork: ${error.message}`
+                    console.error('Failed to load artwork:', error)
+                }
+            }
+
+            const loadHeatherFromFile = async (file) => {
+                try {
+                    if (!file.type.startsWith('image/')) {
+                        throw new Error('Please select a valid image file')
+                    }
+
+                    const mockup2DGenerator = getMockup2DGeneratorInstance()
+                    if (!mockup2DGenerator) {
+                        throw new Error('Failed to get Mockup2DGenerator instance')
+                    }
+
+                    // Create preview
+                    const previewUrl = URL.createObjectURL(file)
+                    heatherPreview.src = previewUrl
+                    heatherPreviewContainer.style.display = 'block'
+                    heatherUploadArea.style.display = 'none'
+
+                    // Load heather texture for mockup generation
+                    customHeatherImage = previewUrl
+                    
+                    // Auto-render if heather is enabled and not already rendering
+                    if (applyHeather && !isRendering) {
+                        await render()
+                    }
+
+                } catch (error) {
+                    errorEl.style.display = 'block'
+                    errorEl.textContent = `Error loading heather texture: ${error.message}`
+                    console.error('Failed to load heather texture:', error)
+                }
+            }
+
+            const removeArtwork = async () => {
+                // Reset to default artwork
+                artwork = null
+                artworkPreviewContainer.style.display = 'none'
+                uploadArea.style.display = 'block'
+                artworkInput.value = ''
+                errorEl.style.display = 'none'
+
+                // Load default artwork
+                const mockup2DGenerator = getMockup2DGeneratorInstance()
+                if (mockup2DGenerator) {
+                    try {
+                        artwork = await mockup2DGenerator._loadImage(artworkUrl, null, true)
+                        if (!isRendering) {
+                            await render()
+                        }
+                    } catch (error) {
+                        console.warn('Failed to load default artwork:', error)
+                    }
+                }
+            }
+
+            const removeHeather = async () => {
+                // Reset to default heather
+                customHeatherImage = null
+                heatherPreviewContainer.style.display = 'none'
+                heatherUploadArea.style.display = 'block'
+                heatherInput.value = ''
+
+                // Re-render if heather is enabled and not already rendering
+                if (applyHeather && !isRendering) {
+                    await render()
+                }
+            }
+
+            const setupDragAndDrop = (uploadArea, fileInput, loadFunction) => {
+                uploadArea.addEventListener('dragover', (e) => {
+                    e.preventDefault()
+                    uploadArea.classList.add('dragover')
+                })
+
+                uploadArea.addEventListener('dragleave', (e) => {
+                    e.preventDefault()
+                    uploadArea.classList.remove('dragover')
+                })
+
+                uploadArea.addEventListener('drop', (e) => {
+                    e.preventDefault()
+                    uploadArea.classList.remove('dragover')
+                    const file = e.dataTransfer.files[0]
+                    if (file) {
+                        fileInput.files = e.dataTransfer.files
+                        loadFunction(file)
+                    }
+                })
+            }
+
+            document.addEventListener('DOMContentLoaded', async () => {
+                mockupDisplayer = document.getElementById('mockup_displayer')
+                loadingEl = document.getElementById('loading')
+                errorEl = document.getElementById('error')
+                mockupSelect = document.getElementById('mockup_select')
+
+                colorInput = document.getElementById('color')
+                colorCodeInput = document.getElementById('color_code')
+                
+                uploadArea = document.getElementById('upload_area')
+                artworkInput = document.getElementById('artwork_input')
+                artworkPreview = document.getElementById('artwork_preview')
+                artworkPreviewContainer = document.getElementById('artwork_preview_container')
+                removeArtworkBtn = document.getElementById('remove_artwork')
+                applyHeatherCheckbox = document.getElementById('apply_heather')
+                
+                heatherUploadSection = document.getElementById('heather_upload_section')
+                heatherUploadArea = document.getElementById('heather_upload_area')
+                heatherInput = document.getElementById('heather_input')
+                heatherPreview = document.getElementById('heather_preview')
+                heatherPreviewContainer = document.getElementById('heather_preview_container')
+                removeHeatherBtn = document.getElementById('remove_heather')
+
+                // Mockup selection change handler
+                mockupSelect.addEventListener('change', async (e) => {
+                    if (isRendering) return
+                    
+                    const newMockupId = e.target.value
+                    if (!newMockupId || newMockupId === selectedMockupId) return
+
+                    selectedMockupId = newMockupId
+
+                    destroyMockup2DGeneratorInstance()
+                    loadMockupInfosToGenerator(selectedMockupId)
+                    
+                    // Re-render with new mockup if artwork is loaded
+                    if (artwork && !isRendering) {
+                        await render()
+                    }
+                })
+
+                // Color change handlers
+                colorInput.addEventListener('change', (e) => {
+                    if (isRendering) return
+                    color = e.target.value
+                    colorCodeInput.value = e.target.value
+                    render()
+                })
+
+                colorCodeInput.addEventListener('change', (e) => {
+                    if (isRendering) return
+                    color = e.target.value
+                    colorInput.value = e.target.value
+                    render()
+                })
+
+                // Heather effect change handler
+                applyHeatherCheckbox.addEventListener('change', (e) => {
+                    applyHeather = e.target.checked
+                    heatherUploadSection.style.display = applyHeather ? 'block' : 'none'
+                    
+                    if (!isRendering) {
+                        render()
+                    }
+                })
+
+                // Artwork upload handlers
+                uploadArea.addEventListener('click', () => {
+                    artworkInput.click()
+                })
+
+                artworkInput.addEventListener('change', (e) => {
+                    const file = e.target.files[0]
+                    if (file) {
+                        loadArtworkFromFile(file)
+                    }
+                })
+
+                setupDragAndDrop(uploadArea, artworkInput, loadArtworkFromFile)
+
+                // Heather upload handlers
+                heatherUploadArea.addEventListener('click', () => {
+                    heatherInput.click()
+                })
+
+                heatherInput.addEventListener('change', (e) => {
+                    const file = e.target.files[0]
+                    if (file) {
+                        loadHeatherFromFile(file)
+                    }
+                })
+
+                setupDragAndDrop(heatherUploadArea, heatherInput, loadHeatherFromFile)
+
+                // Remove handlers
+                removeArtworkBtn.addEventListener('click', removeArtwork)
+                removeHeatherBtn.addEventListener('click', removeHeather)
+
+                // Initial load
+                loadingEl.style.display = 'block'
+
+                // Load available mockups first
+                await loadAvailableMockups()
+                
+                try {
+                    const mockup2DGenerator = getMockup2DGeneratorInstance()
+                    artwork = await mockup2DGenerator._loadImage(artworkUrl, null, true)
+                    await render()
+                } catch (error) {
+                    console.warn('Failed to load default artwork:', error)
+                    errorEl.style.display = 'block'
+                    errorEl.textContent = 'Please upload an artwork image to get started'
+                }
+
+                loadingEl.style.display = 'none'
+            })
+
+            function removeAllChildNodes(parent) {
+                while (parent.firstChild) {
+                    parent.removeChild(parent.firstChild)
+                }
+            }
+        </script>
+    </body>
+</html>

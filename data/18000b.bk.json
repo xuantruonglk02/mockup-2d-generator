@@ -78,6 +78,11 @@
                     "name": "Front.Front.fx.multiply_1",
                     "image_path": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/68ca1be43ae8691ae4d868d2/image-mask/Front.Front.fx.multiply_1.png",
                     "blend_mode": "multiply"
+                },
+                {
+                    "name": "Front.Front.fx.normal_0",
+                    "image_path": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/68ca1be43ae8691ae4d868d2/image-mask/Front.Front.fx.normal_0.png",
+                    "blend_mode": "normal"
                 }
             ],
             "size": {
@@ -166,6 +171,11 @@
                     "name": "Back.Back.fx.multiply_1",
                     "image_path": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/68ca1be43ae8691ae4d868d2/image-mask/Back.Back.fx.multiply_1.png",
                     "blend_mode": "multiply"
+                },
+                {
+                    "name": "Back.Back.fx.normal_0",
+                    "image_path": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/68ca1be43ae8691ae4d868d2/image-mask/Back.Back.fx.normal_0.png",
+                    "blend_mode": "normal"
                 }
             ],
             "size": {
@@ -256,6 +266,11 @@
                     "blend_mode": "multiply"
                 },
                 {
+                    "name": "Front_Back.Front_Back.Back.fx.normal_0",
+                    "image_path": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/68ca1be43ae8691ae4d868d2/image-mask/Front_Back.Front_Back.Back.fx.normal_0.png",
+                    "blend_mode": "normal"
+                },
+                {
                     "name": "Front_Back.Front_Back.Front.Model",
                     "image_path": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/68ca1be43ae8691ae4d868d2/image-mask/Front_Back.Front_Back.Front.Model.png"
                 },
@@ -324,6 +339,11 @@
                     "name": "Front_Back.Front_Back.Front.fx.multiply_1",
                     "image_path": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/68ca1be43ae8691ae4d868d2/image-mask/Front_Back.Front_Back.Front.fx.multiply_1.png",
                     "blend_mode": "multiply"
+                },
+                {
+                    "name": "Front_Back.Front_Back.Front.fx.normal_0",
+                    "image_path": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/68ca1be43ae8691ae4d868d2/image-mask/Front_Back.Front_Back.Front.fx.normal_0.png",
+                    "blend_mode": "normal"
                 }
             ],
             "size": {

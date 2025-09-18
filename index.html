@@ -234,13 +234,13 @@
                 if (defaultMockup) {
                     mockupSelect.value = defaultMockup
                     selectedMockupId = defaultMockup
-                    loadMockupInfosToGenerator(defaultMockup)
+                    await loadMockupInfosToGenerator(defaultMockup)
                 }
             }
 
-            const loadMockupInfosToGenerator = (mockupId) => {
+            const loadMockupInfosToGenerator = async (mockupId) => {
                 try {
-                    mockupInfos = loadMockupInfos(mockupId)
+                    mockupInfos = await loadMockupInfos(mockupId)
                     const mockup2DGenerator = getMockup2DGeneratorInstance()
                     if (mockup2DGenerator) {
                         mockup2DGenerator.loadMockupInfos(mockupInfos)
@@ -451,7 +451,7 @@
                     selectedMockupId = newMockupId
 
                     destroyMockup2DGeneratorInstance()
-                    loadMockupInfosToGenerator(selectedMockupId)
+                    await loadMockupInfosToGenerator(selectedMockupId)
                     
                     // Re-render with new mockup if artwork is loaded
                     if (artwork && !isRendering) {

@@ -84,19 +84,7 @@
                 left: 50%;
             }
             
-            .artwork-section {
-                border-top: 1px solid #dee2e6;
-                padding-top: 1rem;
-                margin-top: 1rem;
-            }
-            
-            .color-section {
-                border-top: 1px solid #dee2e6;
-                padding-top: 1rem;
-                margin-top: 1rem;
-            }
-            
-            .heather-section {
+            .section {
                 border-top: 1px solid #dee2e6;
                 padding-top: 1rem;
                 margin-top: 1rem;
@@ -120,7 +108,7 @@
                     </div>
                     
                     <!-- Artwork Upload Section -->
-                    <div class="artwork-section mb-4">
+                    <div class="section mb-4">
                         <h5>Upload Artwork</h5>
                         <div id="upload_area" class="upload-area mb-3">
                             <div class="upload-icon">📎</div>
@@ -137,7 +125,7 @@
                     </div>
                     
                     <!-- Color Selection -->
-                    <div class="color-section mb-3">
+                    <div class="section mb-3">
                         <h5>Base Color</h5>
                         <div class="d-flex gap-2 mb-2">
                             <input type="color" id="color" name="color" value="#ffffff" class="form-control form-control-color" />
@@ -146,7 +134,7 @@
                     </div>
                     
                     <!-- Heather Effect Section -->
-                    <div class="heather-section">
+                    <div class="section">
                         <h5>Heather Effect</h5>
                         <div class="mb-3">
                             <div class="form-check">
@@ -174,6 +162,19 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="section">
+                        <h5>Background</h5>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="use_background" name="use_background">
+                                <label class="form-check-label" for="use_background">
+                                    Use background
+                                </label>
+                            </div>
+                            <small class="form-text text-muted">The mockup image needs to be good even without a background</small>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -197,6 +198,7 @@
             let heatherPreview = null
             let heatherPreviewContainer = null
             let removeHeatherBtn = null
+            let useBackgroundCheckbox = null
 
             let mockupInfos = null
             let selectedMockupId = null
@@ -206,6 +208,7 @@
             let artwork = null
             let applyHeather = false
             let customHeatherImage = null
+            let useBackground = false
 
             let isRendering = false
 
@@ -264,7 +267,12 @@
                     errorEl.style.display = 'none'
 
                     // Pass the custom heather image if available
-                    const mockups = await mockup2DGenerator.render(artwork, color, applyHeather ? (customHeatherImage || 'default') : null)
+                    const mockups = await mockup2DGenerator.render(
+                        artwork,
+                        color,
+                        applyHeather ? (customHeatherImage || 'default') : null,
+                        useBackground,
+                    )
                     if (!mockups || mockups.length === 0) {
                         throw new Error('No mockups were generated')
                     }
@@ -431,6 +439,7 @@
                 artworkPreviewContainer = document.getElementById('artwork_preview_container')
                 removeArtworkBtn = document.getElementById('remove_artwork')
                 applyHeatherCheckbox = document.getElementById('apply_heather')
+                useBackgroundCheckbox = document.getElementById('use_background')
                 
                 heatherUploadSection = document.getElementById('heather_upload_section')
                 heatherUploadArea = document.getElementById('heather_upload_area')
@@ -476,6 +485,14 @@
                 applyHeatherCheckbox.addEventListener('change', (e) => {
                     applyHeather = e.target.checked
                     heatherUploadSection.style.display = applyHeather ? 'block' : 'none'
+                    
+                    if (!isRendering) {
+                        render()
+                    }
+                })
+
+                useBackgroundCheckbox.addEventListener('change', (e) => {
+                    useBackground = e.target.checked
                     
                     if (!isRendering) {
                         render()

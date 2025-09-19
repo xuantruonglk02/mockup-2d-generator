@@ -194,7 +194,7 @@ class Mockup2DGenerator {
         const imagePromises = []
 
         for (const layer of layers) {
-            if (layer.image_path && layer.name !== `${mockupInfo.name}.BG`) {
+            if (layer.image_path) {
                 imagePromises.push(this._loadImage(layer.image_path, canvasSize))
             }
             if (layer.color_mask_path) {
@@ -216,7 +216,7 @@ class Mockup2DGenerator {
         await Promise.all(imagePromises)
     }
 
-    async render(design, color, heatherPath) {
+    async render(design, color, heatherPath, useBackground = false) {
         const startTs = Date.now()
 
         /** @type {MockupLayer[]} */
@@ -228,7 +228,7 @@ class Mockup2DGenerator {
         const mockups = []
         for (const mockupInfo of mockupInfos) {
             this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT)
-            await this._renderMockupInfo(mockupInfo, artwork, color, heatherPath)
+            await this._renderMockupInfo(mockupInfo, artwork, color, heatherPath, useBackground)
             const mockupBlobURL = await this.exportAsBlobURL()
             mockups.push(mockupBlobURL)
         }
@@ -241,7 +241,7 @@ class Mockup2DGenerator {
         return mockups
     }
 
-    async _renderMockupInfo(mockupInfo, artwork, color, heatherPath) {
+    async _renderMockupInfo(mockupInfo, artwork, color, heatherPath, useBackground = false) {
         /** @type {MockupLayer[]} */
         const layers = mockupInfo?.parts || []
 
@@ -252,7 +252,7 @@ class Mockup2DGenerator {
             let startTs = Date.now()
 
             try {
-                if (layer.name === `${mockupInfo.name}.BG`) continue // Skip BG
+                if (!useBackground && layer.name === `${mockupInfo.name}.BG`) continue
 
                 if (layer.color_mask_path && layer.is_color_image) {
                     await this.glFillColor(layer, color)

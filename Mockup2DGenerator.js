@@ -755,16 +755,14 @@ class Mockup2DGenerator {
         return oCanvas
     }
 
-    /**
-     *
-     * @param {'normal' | 'multiply' | 'screen' | 'linear_dodge'} mode
-     */
     _glSetBlendMode(mode) {
         if (mode === 'multiply') {
             this.gl.blendFunc(this.gl.DST_COLOR, this.gl.ONE_MINUS_SRC_ALPHA)
         } else if (mode === 'screen') {
             this.gl.blendFunc(this.gl.ONE, this.gl.ONE_MINUS_SRC_COLOR)
         } else if (mode === 'linear_dodge') {
+            this.gl.blendFunc(this.gl.ONE, this.gl.ONE)
+        } else if (mode === 'color_dodge') {
             this.gl.blendFunc(this.gl.ONE, this.gl.ONE)
         } else {
             this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA)

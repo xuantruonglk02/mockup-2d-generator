@@ -9,6 +9,12 @@ const data = {
     'Unisex V-neck T-shirt Bella Canvas 3005 (Made in US)': '3005us',
     'Youth T-shirt Gildan 5000B (Made in EU)': '5000beu',
     'Youth T-shirt Gildan 5000B (Made in AU)': '5000bau',
+    'Classic Unisex Hoodie Comfort Colors 1567 (Made in US)': '1567us',
+    'Classic Unisex T-Shirt Gildan 5000 (Made In US)': '5000us',
+    'Baby Bodysuit LAT 4424 (Made in US)': '4424us',
+    'Classic Unisex T-Shirt Gildan 6400 (Made In AU)': '6400au',
+    'Classic Unisex Hoodie Gildan 18500 (Made In AU)': '18500au',
+    'Long Sleeve T-shirt Gildan 2400 (Made in AU)': '2400au',
 }
 
 const getAvailableMockups = () => {

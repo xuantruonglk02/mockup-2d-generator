@@ -5,6 +5,10 @@ const data = {
     'Unisex Jersey Tank Bella Canvas 3480 (Made in US)': '3480us',
     'Heavyweight Youth T-Shirt Comfort Colors 9018 (Made in US)': '9018us',
     'Unisex Jersey Short Sleeve Tee Bella Canvas 3001 (Made in US)': '3001us',
+    'Unisex V-neck T-shirt Gildan 64V00 (Made in EU)': '64v00eu',
+    'Unisex V-neck T-shirt Bella Canvas 3005 (Made in US)': '3005us',
+    'Youth T-shirt Gildan 5000B (Made in EU)': '5000beu',
+    'Youth T-shirt Gildan 5000B (Made in AU)': '5000bau',
 }
 
 const getAvailableMockups = () => {

@@ -15,6 +15,9 @@ const data = {
     'Classic Unisex T-Shirt Gildan 6400 (Made In AU)': '6400au',
     'Classic Unisex Hoodie Gildan 18500 (Made In AU)': '18500au',
     'Long Sleeve T-shirt Gildan 2400 (Made in AU)': '2400au',
+    'Women\'s T-shirt': 'wts',
+    'Youth T-shirt': 'yts',
+    'Women\'s V-neck T-shirt': 'wvts',
 }
 
 const getAvailableMockups = () => {

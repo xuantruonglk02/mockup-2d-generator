@@ -4,6 +4,7 @@ const data = {
     'Women\'s T-shirt Gildan 5000L (Made In US)': '5000lus',
     'Unisex Jersey Tank Bella Canvas 3480 (Made in US)': '3480us',
     'Heavyweight Youth T-Shirt Comfort Colors 9018 (Made in US)': '9018us',
+    'Unisex Jersey Short Sleeve Tee Bella Canvas 3001 (Made in US)': '3001us',
 }
 
 const getAvailableMockups = () => {

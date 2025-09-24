@@ -18,6 +18,9 @@ const data = {
     'Women\'s T-shirt': 'wts',
     'Youth T-shirt': 'yts',
     'Women\'s V-neck T-shirt': 'wvts',
+    'Youth Sweatshirt AWDIS JH30J (Made in EU)': 'jh30jeu',
+    'Zip Hoodie Gildan 18600 (Made in EU)': '18600eu',
+    'Ladies\' V-neck T-shirt Gildan 5V00L (Made in US)': '5v00lus',
 }
 
 const getAvailableMockups = () => {

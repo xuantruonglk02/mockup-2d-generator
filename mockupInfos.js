@@ -21,6 +21,14 @@ const data = {
     'Youth Sweatshirt AWDIS JH30J (Made in EU)': 'jh30jeu',
     'Zip Hoodie Gildan 18600 (Made in EU)': '18600eu',
     'Ladies\' V-neck T-shirt Gildan 5V00L (Made in US)': '5v00lus',
+    'Long Sleeve T-Shirt Gildan 5400 (Made in US)': '5400us',
+    'Ladies’ Tank Top Gildan 64200L (Made in EU)': '64200leu',
+    'Bleach Splatter Unisex V-neck T-shirt': 'bsvts',
+    'Kid Hoodie AWDis JH001J (Made in EU)': 'jh001jeu',
+    'Heavyweight Adult Pocket T-Shirt Comfort Colors 6030 (Made in US)': '6030us',
+    'Toddler Fine Jersey Rabbit Skins 3321 (Made in US)': '3321us',
+    'Premium Unisex Hoodie AS Colour 5101 (Made In AU)': '5101au',
+    'Classic Unisex DryBlend T-Shirt Gildan 8000 (Made in US)': '8000us',
 }
 
 const getAvailableMockups = () => {

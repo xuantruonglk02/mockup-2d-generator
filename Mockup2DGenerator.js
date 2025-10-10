@@ -494,12 +494,15 @@ class Mockup2DGenerator {
 
                 if (index < mappedPoints.length) {
                     let [srcX, srcY] = mappedPoints[index]
-                    texCoords.push(this._clamp(srcX, 0, 1), this._clamp(srcY, 0, 1))
+                    // texCoords.push(this._clamp(srcX, 0, 1), this._clamp(srcY, 0, 1))
+                    texCoords.push(srcX, srcY)
                 } else {
                     texCoords.push(j / (M - 1), i / (N - 1))
                 }
             }
         }
+
+        console.log(texCoords)
 
         // Generate indices
         for (let i = 0; i < N - 1; i++) {

@@ -35,9 +35,11 @@ const getAvailableMockups = () => {
     return Object.keys(data)
 }
 
-const loadMockupInfos = async (product) => {
+const loadMockupInfos = async (product, useOptimized) => {
     if (data[product]) {
-        const res = await fetch(`./data/${data[product]}.json`)
+        const res = useOptimized
+            ? await fetch(`./optimized-mockup-infos/${data[product]}/optimized_mockup_infos.json`)
+            : await fetch(`./data/${data[product]}.json`)
         const json = await res.json()
         return json.mockup_infos
     } else throw new Error('Product not supported')

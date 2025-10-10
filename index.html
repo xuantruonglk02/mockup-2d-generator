@@ -101,8 +101,20 @@
             <div class="row">
                 <div id="mockup_displayer" class="d-flex flex-wrap gap-3 col-9"></div>
                 <div class="column col-3">
-                    <!-- Mockup Selection -->
                     <div class="mb-4">
+                        <h5>Switch to new optimized mockup infos</h5>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="optimized_mockup_infos" name="optimized_mockup_infos">
+                                <label class="form-check-label" for="optimized_mockup_infos">
+                                    Use optimized
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mockup Selection -->
+                    <div class="section mb-4">
                         <label for="mockup_select" class="form-label">Select Mockup</label>
                         <select id="mockup_select" class="form-select"></select>
                     </div>
@@ -199,6 +211,7 @@
             let heatherPreviewContainer = null
             let removeHeatherBtn = null
             let useBackgroundCheckbox = null
+            let useOptimizedMockupInfosCheckbox = null
 
             let mockupInfos = null
             let selectedMockupId = null
@@ -209,6 +222,7 @@
             let applyHeather = false
             let customHeatherImage = null
             let useBackground = false
+            let useOptimizedMockupInfos = false
 
             let isRendering = false
 
@@ -241,7 +255,7 @@
 
             const loadMockupInfosToGenerator = async (mockupId) => {
                 try {
-                    mockupInfos = await loadMockupInfos(mockupId)
+                    mockupInfos = await loadMockupInfos(mockupId, useOptimizedMockupInfos)
                     const mockup2DGenerator = getMockup2DGeneratorInstance()
                     if (mockup2DGenerator) {
                         mockup2DGenerator.loadMockupInfos(mockupInfos)
@@ -440,6 +454,7 @@
                 removeArtworkBtn = document.getElementById('remove_artwork')
                 applyHeatherCheckbox = document.getElementById('apply_heather')
                 useBackgroundCheckbox = document.getElementById('use_background')
+                useOptimizedMockupInfosCheckbox = document.getElementById('optimized_mockup_infos')
                 
                 heatherUploadSection = document.getElementById('heather_upload_section')
                 heatherUploadArea = document.getElementById('heather_upload_area')
@@ -495,6 +510,15 @@
                     useBackground = e.target.checked
                     
                     if (!isRendering) {
+                        render()
+                    }
+                })
+
+                useOptimizedMockupInfosCheckbox.addEventListener('change', async (e) => {
+                    useOptimizedMockupInfos = e.target.checked
+                    
+                    if (!isRendering) {
+                        await loadMockupInfosToGenerator(selectedMockupId)
                         render()
                     }
                 })

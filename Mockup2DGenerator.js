@@ -275,7 +275,7 @@ class Mockup2DGenerator {
                 console.error('[Mockup2DGenerator] Error during rendering:', error)
             }
 
-            console.debug(`[Mockup2DGenerator] _renderMockupInfo ${mockupInfo.name} "${layer.name}" | ${Date.now() - startTs} ms`)
+            // console.debug(`[Mockup2DGenerator] _renderMockupInfo ${mockupInfo.name} "${layer.name}" | ${Date.now() - startTs} ms`)
         }
     }
 
@@ -501,8 +501,6 @@ class Mockup2DGenerator {
                 }
             }
         }
-
-        console.log(texCoords)
 
         // Generate indices
         for (let i = 0; i < N - 1; i++) {

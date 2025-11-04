@@ -1,4 +1,5 @@
 const data = {
+    // part 2
     'Youth Jersey Tee Bella Canvas 3001Y (Made in US)': '3001yus',
     'Classic Unisex T-Shirt Gildan 5000 (Made in AU)': '6400au',
     'Youth T-shirt Gildan 64000B (Made in US)': '64000bus',
@@ -7,7 +8,10 @@ const data = {
     'Classic Unisex  Performance T-Shirt Gildan 42000 (Made in US)': '42000us',
     'Zip Hoodie Gildan 18600 (Made in AU)': '18600au',
     'Heavy Cotton Tank Top Gildan 5200  (Made in US)': '5200us',
+    'Women’s Relaxed Jersey V-Neck Tee Bella Canvas 6405 (Made in US)': '6405us',
+    'Women\'s Ideal T-Shirt Next Level 1510 (Made in US)': '1510us',
     
+    // part 1
     'polo': 'polo',
     'Youth Sweatshirt Gildan 18000B (Made in US)': '18000bus',
     'Classic Unisex Crew-neck Sweatshirt Comfort Colors 1566 (Made in US)': '1566us',

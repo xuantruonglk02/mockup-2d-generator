@@ -1,7 +1,7 @@
 const data = {
     // part 2
     'Youth Jersey Tee Bella Canvas 3001Y (Made in US)': '3001yus',
-    'Classic Unisex T-Shirt Gildan 5000 (Made in AU)': '6400au',
+    'Classic Unisex T-Shirt Gildan 5000 (Made in AU)': '5000au',
     'Youth T-shirt Gildan 64000B (Made in US)': '64000bus',
     'Comfort Color Garment-Dyed Lightweight Fleece Crewneck Sweatshirt 1466 (Made in US)': '1466us',
     'Classic Unisex Zip Hoodie Gildan 18600 (Made in US)': '18600us',

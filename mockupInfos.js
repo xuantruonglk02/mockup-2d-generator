@@ -1,4 +1,14 @@
 const data = {
+    'Youth Jersey Tee Bella Canvas 3001Y (Made in US)': '3001yus',
+    'Classic Unisex T-Shirt Gildan 5000 (Made in AU)': '6400au',
+    'Youth T-shirt Gildan 64000B (Made in US)': '64000bus',
+    'Comfort Color Garment-Dyed Lightweight Fleece Crewneck Sweatshirt 1466 (Made in US)': '1466us',
+    'Classic Unisex Zip Hoodie Gildan 18600 (Made in US)': '18600us',
+    'Classic Unisex  Performance T-Shirt Gildan 42000 (Made in US)': '42000us',
+    'Zip Hoodie Gildan 18600 (Made in AU)': '18600au',
+    'Heavy Cotton Tank Top Gildan 5200  (Made in US)': '5200us',
+    
+    'polo': 'polo',
     'Youth Sweatshirt Gildan 18000B (Made in US)': '18000bus',
     'Classic Unisex Crew-neck Sweatshirt Comfort Colors 1566 (Made in US)': '1566us',
     'Women\'s T-shirt Gildan 5000L (Made In US)': '5000lus',
@@ -38,7 +48,7 @@ const getAvailableMockups = () => {
 const loadMockupInfos = async (product, useOptimized) => {
     if (data[product]) {
         const res = useOptimized
-            ? await fetch(`./optimized-mockup-infos/${data[product]}/optimized_mockup_infos.json`)
+            ? await fetch(`./optimized-mockup-infos/${data[product]}/mockup_infos.optimized_web.json`)
             : await fetch(`./data/${data[product]}.json`)
         const json = await res.json()
         return json.mockup_infos

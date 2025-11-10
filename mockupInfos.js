@@ -10,6 +10,9 @@ const data = {
     'Heavy Cotton Tank Top Gildan 5200  (Made in US)': '5200us',
     'Women’s Relaxed Jersey V-Neck Tee Bella Canvas 6405 (Made in US)': '6405us',
     'Women\'s Ideal T-Shirt Next Level 1510 (Made in US)': '1510us',
+    'Toddler Short Sleeve Tee Bella Canvas 3001T (Made in US)': '3001tus',
+    'Toddler Heavy Cotton T-Shirt Gildan 5100P (Made in US)': '5100pus',
+    'Infant Fine Jersey Tee Rabbit Skins 3322 (Made in US)': '3322us',
     
     // part 1
     'polo': 'polo',

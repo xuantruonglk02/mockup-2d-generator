@@ -13,6 +13,10 @@ const data = {
     'Toddler Short Sleeve Tee Bella Canvas 3001T (Made in US)': '3001tus',
     'Toddler Heavy Cotton T-Shirt Gildan 5100P (Made in US)': '5100pus',
     'Infant Fine Jersey Tee Rabbit Skins 3322 (Made in US)': '3322us',
+    'Women\'s Jersey Racerback Tank Bella Canvas 6008 (Made in US)': '6008us',
+    'Toddler Unisex  T-Shirt Gildan 5100P (Made in AU)': '5100pau',
+    'Unisex Classic Cotton Muscle Tank Next Level 3633 (Made in US)': '3633us',
+    'Youth Sweatshirt AWDIS JH30J (Made in EU)': 'jh30jeu',
     
     // part 1
     'polo': 'polo',
@@ -35,7 +39,6 @@ const data = {
     'Women\'s T-shirt': 'wts',
     'Youth T-shirt': 'yts',
     'Women\'s V-neck T-shirt': 'wvts',
-    'Youth Sweatshirt AWDIS JH30J (Made in EU)': 'jh30jeu',
     'Zip Hoodie Gildan 18600 (Made in EU)': '18600eu',
     'Ladies\' V-neck T-shirt Gildan 5V00L (Made in US)': '5v00lus',
     'Long Sleeve T-Shirt Gildan 5400 (Made in US)': '5400us',

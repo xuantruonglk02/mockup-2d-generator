@@ -17,7 +17,8 @@
                     "name": "Front.Front.Colors.color_mask",
                     "image_path": "https://d16wh0ai3tx0d7.cloudfront.net/mockups/product-mockups/Transparent.png",
                     "color_mask_path": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/68d20d03f5db4caa0aecc62a/color-mask/Front.Front.Colors.color_mask.png",
-                    "is_color_image": true
+                    "is_color_image": true,
+                    "#e8e8ed": "heather_texture"
                 },
                 {
                     "name": "Front.Front.Design.Front_0",
@@ -75,7 +76,8 @@
                     "name": "Back.Back.Colors.color_mask",
                     "image_path": "https://d16wh0ai3tx0d7.cloudfront.net/mockups/product-mockups/Transparent.png",
                     "color_mask_path": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/68d20d03f5db4caa0aecc62a/color-mask/Back.Back.Colors.color_mask.png",
-                    "is_color_image": true
+                    "is_color_image": true,
+                    "#e8e8ed": "heather_texture"
                 },
                 {
                     "name": "Back.Back.Design.Back_0",
@@ -133,7 +135,8 @@
                     "name": "Front_Back.Front_Back.Back.Colors.color_mask",
                     "image_path": "https://d16wh0ai3tx0d7.cloudfront.net/mockups/product-mockups/Transparent.png",
                     "color_mask_path": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/68d20d03f5db4caa0aecc62a/color-mask/Front_Back.Front_Back.Back.Colors.color_mask.png",
-                    "is_color_image": true
+                    "is_color_image": true,
+                    "#e8e8ed": "heather_texture"
                 },
                 {
                     "name": "Front_Back.Front_Back.Back.Design.Back_0",
@@ -173,7 +176,8 @@
                     "name": "Front_Back.Front_Back.Front.Colors.color_mask",
                     "image_path": "https://d16wh0ai3tx0d7.cloudfront.net/mockups/product-mockups/Transparent.png",
                     "color_mask_path": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/68d20d03f5db4caa0aecc62a/color-mask/Front_Back.Front_Back.Front.Colors.color_mask.png",
-                    "is_color_image": true
+                    "is_color_image": true,
+                    "#e8e8ed": "heather_texture"
                 },
                 {
                     "name": "Front_Back.Front_Back.Front.Design.Front_0",

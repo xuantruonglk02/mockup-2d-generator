@@ -452,6 +452,16 @@ def generate_mockup(mockup_info, artwork_path, output_path, mask_mode=False):
     canvas.save(output_path)
 
 
+def count_warp_parts(mockup_infos):
+    """Count the number of warp parts in the configuration"""
+    total_warp_parts = 0
+    for mockup_info in mockup_infos['mockup_infos']:
+        for part in mockup_info['parts']:
+            if part.get('warp_type') == 'warp_npy':
+                total_warp_parts += 1
+    return total_warp_parts
+
+
 def generate_mockups_from_config(mockup_infos, config_type, artwork_dir, output_base_dir, log_file):
     """
     Generate mockups from a specific configuration (original or optimized)
@@ -464,9 +474,16 @@ def generate_mockups_from_config(mockup_infos, config_type, artwork_dir, output_
         log_file: file handle for logging
     
     Returns:
-        tuple: (total_time, mockup_count, individual_times)
+        tuple: (total_time, mockup_count, individual_times, warp_parts_count)
     """
+    # Count warp parts
+    warp_parts_count = count_warp_parts(mockup_infos)
+    
     msg = f"\n{'='*60}\nGenerating {config_type.upper()} mockups\n{'='*60}"
+    print(msg)
+    log_file.write(msg + "\n")
+    
+    msg = f"Configuration: {len(mockup_infos['mockup_infos'])} mockup views, {warp_parts_count} warp parts total"
     print(msg)
     log_file.write(msg + "\n")
     
@@ -479,7 +496,7 @@ def generate_mockups_from_config(mockup_infos, config_type, artwork_dir, output_
         msg = f"No artwork files found in {artwork_dir}"
         print(msg)
         log_file.write(msg + "\n")
-        return 0, 0, []
+        return 0, 0, [], warp_parts_count
     
     total_start_time = time.time()
     mockup_count = 0
@@ -517,14 +534,15 @@ def generate_mockups_from_config(mockup_infos, config_type, artwork_dir, output_
     
     total_time = time.time() - total_start_time
     
-    msg = f"\n{'='*60}\n{config_type.upper()} Summary:\n  Total mockups: {mockup_count}\n  Total time: {total_time:.3f}s\n  Average time per mockup: {total_time/mockup_count:.3f}s\n  Output directory: {mockup_output_dir}\n{'='*60}"
+    msg = f"\n{'='*60}\n{config_type.upper()} Summary:\n  Total mockups: {mockup_count}\n  Warp parts per mockup: {warp_parts_count}\n  Total warp operations: {mockup_count * warp_parts_count}\n  Total time: {total_time:.3f}s\n  Average time per mockup: {total_time/mockup_count:.3f}s\n  Output directory: {mockup_output_dir}\n{'='*60}"
     print(msg)
     log_file.write(msg + "\n")
     
-    return total_time, mockup_count, individual_times
+    return total_time, mockup_count, individual_times, warp_parts_count
 
 
-def generate_comparison_chart(original_time, optimized_time, original_times, optimized_times, output_path):
+def generate_comparison_chart(original_time, optimized_time, original_times, optimized_times,
+                             original_warp_count, optimized_warp_count, output_path):
     """
     Generate a comparison chart showing performance metrics
     
@@ -533,6 +551,8 @@ def generate_comparison_chart(original_time, optimized_time, original_times, opt
         optimized_time: total time for optimized
         original_times: list of individual mockup times for original
         optimized_times: list of individual mockup times for optimized
+        original_warp_count: number of warp parts in original
+        optimized_warp_count: number of warp parts in optimized
         output_path: path to save the chart
     """
     fig, axes = plt.subplots(2, 2, figsize=(14, 10))
@@ -598,16 +618,19 @@ def generate_comparison_chart(original_time, optimized_time, original_times, opt
       • Total Time: {original_time:.3f}s
       • Average/Mockup: {avg_original:.3f}s
       • Mockups: {len(original_times)}
+      • Warp Parts: {original_warp_count}
     
     Optimized:
       • Total Time: {optimized_time:.3f}s
       • Average/Mockup: {avg_optimized:.3f}s
       • Mockups: {len(optimized_times)}
+      • Warp Parts: {optimized_warp_count}
     
     Improvement:
       • Speedup: {speedup:.2f}x faster
       • Time Saved: {time_saved:.3f}s
       • Reduction: {percent_saved:.1f}%
+      • Parts Reduction: {original_warp_count - optimized_warp_count}
     """
     
     ax4.text(0.1, 0.5, summary_text, fontsize=11, family='monospace',
@@ -707,7 +730,7 @@ async def main():
             original_mockup_infos = json.load(f)
         
         # Generate original mockups
-        original_time, original_count, original_times = generate_mockups_from_config(
+        original_time, original_count, original_times, original_warp_count = generate_mockups_from_config(
             original_mockup_infos,
             'original',
             artwork_dir,
@@ -716,7 +739,7 @@ async def main():
         )
         
         # Generate optimized mockups
-        optimized_time, optimized_count, optimized_times = generate_mockups_from_config(
+        optimized_time, optimized_count, optimized_times, optimized_warp_count = generate_mockups_from_config(
             mockup_infos,
             'optimized',
             artwork_dir,
@@ -726,17 +749,23 @@ async def main():
         
         # Final comparison
         comparison_text = f"\n{'='*60}\nFINAL COMPARISON\n{'='*60}\n"
-        comparison_text += f"Original:\n  Mockups: {original_count}\n  Total time: {original_time:.3f}s\n"
+        comparison_text += f"Original:\n  Mockups: {original_count}\n  Warp parts per mockup: {original_warp_count}\n"
+        comparison_text += f"  Total warp operations: {original_count * original_warp_count}\n"
+        comparison_text += f"  Total time: {original_time:.3f}s\n"
         comparison_text += f"  Avg time/mockup: {original_time/original_count:.3f}s\n\n"
-        comparison_text += f"Optimized:\n  Mockups: {optimized_count}\n  Total time: {optimized_time:.3f}s\n"
+        comparison_text += f"Optimized:\n  Mockups: {optimized_count}\n  Warp parts per mockup: {optimized_warp_count}\n"
+        comparison_text += f"  Total warp operations: {optimized_count * optimized_warp_count}\n"
+        comparison_text += f"  Total time: {optimized_time:.3f}s\n"
         comparison_text += f"  Avg time/mockup: {optimized_time/optimized_count:.3f}s\n\n"
         
         if original_time > 0:
             speedup = original_time / optimized_time
             time_saved = original_time - optimized_time
+            warp_reduction = original_warp_count - optimized_warp_count
             comparison_text += f"Performance Improvement:\n"
             comparison_text += f"  Speedup: {speedup:.2f}x faster\n"
             comparison_text += f"  Time saved: {time_saved:.3f}s ({time_saved/original_time*100:.1f}%)\n"
+            comparison_text += f"  Warp parts reduced: {warp_reduction} ({warp_reduction/original_warp_count*100:.1f}%)\n"
         
         comparison_text += "="*60 + "\n"
         
@@ -747,7 +776,8 @@ async def main():
     
     # Generate comparison chart
     chart_path = os.path.join(mockup_output_base_dir, "performance_comparison.png")
-    generate_comparison_chart(original_time, optimized_time, original_times, optimized_times, chart_path)
+    generate_comparison_chart(original_time, optimized_time, original_times, optimized_times,
+                             original_warp_count, optimized_warp_count, chart_path)
     
 
 if __name__ == "__main__":

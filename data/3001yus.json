@@ -17,7 +17,16 @@
                     "name": "Front.Front.Colors.color_mask",
                     "image_path": "https://d16wh0ai3tx0d7.cloudfront.net/mockups/product-mockups/Transparent.png",
                     "color_mask_path": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/68d20fc1f5db4caa0aecc68b/color-mask/Front.Front.Colors.color_mask.png",
-                    "is_color_image": true
+                    "is_color_image": true,
+                    "#f1e9e9": "heather_texture",
+                    "#2b272b": "heather_texture",
+                    "#423d43": "heather_texture",
+                    "#89898b": "heather_texture",
+                    "#749eec": "heather_texture",
+                    "#ffa3a5": "heather_texture",
+                    "#ff3853": "heather_texture",
+                    "#c499ea": "heather_texture",
+                    "#4e7ada": "heather_texture"
                 },
                 {
                     "name": "Front.Front.Design.Left Sleeve_2",
@@ -105,7 +114,16 @@
                     "name": "Back.Back.Colors.color_mask",
                     "image_path": "https://d16wh0ai3tx0d7.cloudfront.net/mockups/product-mockups/Transparent.png",
                     "color_mask_path": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/68d20fc1f5db4caa0aecc68b/color-mask/Back.Back.Colors.color_mask.png",
-                    "is_color_image": true
+                    "is_color_image": true,
+                    "#f1e9e9": "heather_texture",
+                    "#2b272b": "heather_texture",
+                    "#423d43": "heather_texture",
+                    "#89898b": "heather_texture",
+                    "#749eec": "heather_texture",
+                    "#ffa3a5": "heather_texture",
+                    "#ff3853": "heather_texture",
+                    "#c499ea": "heather_texture",
+                    "#4e7ada": "heather_texture"
                 },
                 {
                     "name": "Back.Back.Design.Left Sleeve_2",
@@ -193,7 +211,16 @@
                     "name": "Front_Back.Front_Back.Back.Colors.color_mask",
                     "image_path": "https://d16wh0ai3tx0d7.cloudfront.net/mockups/product-mockups/Transparent.png",
                     "color_mask_path": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/68d20fc1f5db4caa0aecc68b/color-mask/Front_Back.Front_Back.Back.Colors.color_mask.png",
-                    "is_color_image": true
+                    "is_color_image": true,
+                    "#f1e9e9": "heather_texture",
+                    "#2b272b": "heather_texture",
+                    "#423d43": "heather_texture",
+                    "#89898b": "heather_texture",
+                    "#749eec": "heather_texture",
+                    "#ffa3a5": "heather_texture",
+                    "#ff3853": "heather_texture",
+                    "#c499ea": "heather_texture",
+                    "#4e7ada": "heather_texture"
                 },
                 {
                     "name": "Front_Back.Front_Back.Back.Design.Left Sleeve_2",
@@ -263,7 +290,16 @@
                     "name": "Front_Back.Front_Back.Front.Colors.color_mask",
                     "image_path": "https://d16wh0ai3tx0d7.cloudfront.net/mockups/product-mockups/Transparent.png",
                     "color_mask_path": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/68d20fc1f5db4caa0aecc68b/color-mask/Front_Back.Front_Back.Front.Colors.color_mask.png",
-                    "is_color_image": true
+                    "is_color_image": true,
+                    "#f1e9e9": "heather_texture",
+                    "#2b272b": "heather_texture",
+                    "#423d43": "heather_texture",
+                    "#89898b": "heather_texture",
+                    "#749eec": "heather_texture",
+                    "#ffa3a5": "heather_texture",
+                    "#ff3853": "heather_texture",
+                    "#c499ea": "heather_texture",
+                    "#4e7ada": "heather_texture"
                 },
                 {
                     "name": "Front_Back.Front_Back.Front.Design.Left Sleeve_2",

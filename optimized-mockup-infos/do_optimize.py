@@ -8,6 +8,13 @@ from aiohttp import ClientTimeout
 import asyncio
 import aiohttp
 import copy
+import sys
+import time
+import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('Agg')  # Use non-interactive backend
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from warp_image.tps import numpy as tps
 
 
 ROOT_DIR = "/home/dev/code/test-color-mockup-2d"
@@ -307,6 +314,312 @@ def process_design_parts(side_name, parts):
     }
 
 
+def warp_image(image, model_path, artwork_size, warped_size):
+    """
+    Warp image using TPS (Thin Plate Spline) transformation
+    
+    Args:
+        image: numpy array or PIL Image
+        model_path: path to the .npy model file
+        artwork_size: tuple (width, height) for artwork
+        warped_size: tuple (width, height) for final warped image
+    
+    Returns:
+        PIL Image of warped result
+    """
+    # Convert PIL Image to numpy array if needed
+    if isinstance(image, Image.Image):
+        image = np.array(image)
+    
+    # Resize the image with high-quality interpolation
+    resized_img = cv2.resize(image, artwork_size, cv2.INTER_LANCZOS4)
+    
+    # Load the transformation grid
+    grid = np.load(model_path, allow_pickle=True)
+    
+    # Generate the remapping coordinates
+    mapx, mapy = tps.tps_grid_to_remap(grid, artwork_size)
+    
+    # Apply the warping transformation
+    img = cv2.remap(np.array(resized_img), mapx, mapy, cv2.INTER_CUBIC)
+    
+    return Image.fromarray(img).resize(warped_size, Image.LANCZOS)
+
+
+def apply_blend_mode(base, overlay, blend_mode):
+    """
+    Apply blend mode to combine two images
+    
+    Args:
+        base: base image as numpy array (RGBA)
+        overlay: overlay image as numpy array (RGBA)
+        blend_mode: str - 'normal', 'multiply', 'screen', 'linear_dodge'
+    
+    Returns:
+        Combined image as numpy array
+    """
+    # Extract alpha channels
+    base_alpha = base[:, :, 3:4] / 255.0
+    overlay_alpha = overlay[:, :, 3:4] / 255.0
+    
+    # Extract RGB channels
+    base_rgb = base[:, :, :3].astype(np.float32)
+    overlay_rgb = overlay[:, :, :3].astype(np.float32)
+    
+    if blend_mode == 'multiply':
+        blended = (base_rgb * overlay_rgb) / 255.0
+    elif blend_mode == 'screen':
+        blended = 255 - ((255 - base_rgb) * (255 - overlay_rgb)) / 255.0
+    elif blend_mode == 'linear_dodge':
+        blended = np.clip(base_rgb + overlay_rgb, 0, 255)
+    else:  # normal
+        blended = overlay_rgb
+    
+    # Blend with alpha
+    result_rgb = base_rgb * (1 - overlay_alpha) + blended * overlay_alpha
+    result_alpha = np.clip((base_alpha + overlay_alpha * (1 - base_alpha)) * 255, 0, 255)
+    
+    result = np.dstack([result_rgb.astype(np.uint8), result_alpha.astype(np.uint8)])
+    return result
+
+
+def generate_mockup(mockup_info, artwork_path, output_path, mask_mode=False):
+    """
+    Generate a mockup image from mockup_info and artwork
+    
+    Args:
+        mockup_info: dict containing mockup configuration
+        artwork_path: path to artwork image
+        output_path: path to save the generated mockup
+        mask_mode: if True, apply mask to warped design parts
+    """
+    size = mockup_info.get('size', {'width': 1000, 'height': 1000})
+    canvas_size = (size['width'], size['height'])
+    
+    # Create base canvas
+    canvas = Image.new('RGBA', canvas_size, (0, 0, 0, 0))
+    
+    # Load artwork once
+    artwork = Image.open(artwork_path).convert('RGBA')
+    
+    for part in mockup_info['parts']:
+        part_name = part['name']
+        
+        # Handle background and model parts
+        if 'image_path' in part and part.get('warp_type') != 'warp_npy':
+            layer = Image.open(part['image_path']).convert('RGBA')
+            
+            # Apply blend mode if specified
+            if 'blend_mode' in part and part['blend_mode'] != 'normal':
+                canvas_array = np.array(canvas)
+                layer_array = np.array(layer)
+                blended = apply_blend_mode(canvas_array, layer_array, part['blend_mode'])
+                canvas = Image.fromarray(blended, 'RGBA')
+            else:
+                canvas.paste(layer, (0, 0), layer)
+        
+        # Handle design/warp parts
+        elif part.get('warp_type') == 'warp_npy':
+            warp_info = part['warp_info']
+            model_path = warp_info['model']
+            artwork_size = (warp_info['artwork_width'], warp_info['artwork_height'])
+            
+            # Warp the artwork
+            warped = warp_image(artwork, model_path, artwork_size, canvas_size)
+            
+            # Apply mask if specified and in mask mode (original version)
+            if mask_mode and 'mask_path' in part:
+                mask = Image.open(part['mask_path']).convert('RGBA')
+                warped_array = np.array(warped)
+                mask_array = np.array(mask)
+                
+                # Use mask alpha as the design alpha
+                warped_array[:, :, 3] = np.minimum(warped_array[:, :, 3], mask_array[:, :, 3])
+                warped = Image.fromarray(warped_array, 'RGBA')
+            
+            # Apply opacity if specified
+            opacity = part.get('opacity', 100)
+            if opacity < 100:
+                warped_array = np.array(warped)
+                warped_array[:, :, 3] = (warped_array[:, :, 3] * opacity / 100).astype(np.uint8)
+                warped = Image.fromarray(warped_array, 'RGBA')
+            
+            # Composite onto canvas
+            canvas.paste(warped, (0, 0), warped)
+    
+    # Save the result
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    canvas.save(output_path)
+
+
+def generate_mockups_from_config(mockup_infos, config_type, artwork_dir, output_base_dir, log_file):
+    """
+    Generate mockups from a specific configuration (original or optimized)
+    
+    Args:
+        mockup_infos: dict containing mockup configuration
+        config_type: str - 'original' or 'optimized'
+        artwork_dir: path to artwork directory
+        output_base_dir: base output directory
+        log_file: file handle for logging
+    
+    Returns:
+        tuple: (total_time, mockup_count, individual_times)
+    """
+    msg = f"\n{'='*60}\nGenerating {config_type.upper()} mockups\n{'='*60}"
+    print(msg)
+    log_file.write(msg + "\n")
+    
+    mockup_output_dir = os.path.join(output_base_dir, config_type)
+    
+    # Get all artwork files
+    artwork_files = [f for f in os.listdir(artwork_dir) if f.endswith(('.png', '.jpg', '.jpeg'))]
+    
+    if not artwork_files:
+        msg = f"No artwork files found in {artwork_dir}"
+        print(msg)
+        log_file.write(msg + "\n")
+        return 0, 0, []
+    
+    total_start_time = time.time()
+    mockup_count = 0
+    individual_times = []
+    
+    # mask_mode is True for original (uses individual masks), False for optimized
+    mask_mode = (config_type == 'original')
+    
+    for artwork_file in artwork_files:
+        artwork_path = os.path.join(artwork_dir, artwork_file)
+        artwork_name = os.path.splitext(artwork_file)[0]
+        
+        msg = f"\nProcessing artwork: {artwork_file}"
+        print(msg)
+        log_file.write(msg + "\n")
+        
+        for mockup_info in mockup_infos['mockup_infos']:
+            mockup_name = mockup_info['name']
+            output_filename = f"{artwork_name}_{mockup_name}.png"
+            output_path = os.path.join(mockup_output_dir, output_filename)
+            
+            mockup_start = time.time()
+            msg = f"  Generating: {mockup_name}..."
+            print(msg, end=" ")
+            log_file.write(msg)
+            
+            generate_mockup(mockup_info, artwork_path, output_path, mask_mode)
+            
+            mockup_duration = time.time() - mockup_start
+            individual_times.append(mockup_duration)
+            msg = f"✓ ({mockup_duration:.3f}s)"
+            print(msg)
+            log_file.write(" " + msg + "\n")
+            mockup_count += 1
+    
+    total_time = time.time() - total_start_time
+    
+    msg = f"\n{'='*60}\n{config_type.upper()} Summary:\n  Total mockups: {mockup_count}\n  Total time: {total_time:.3f}s\n  Average time per mockup: {total_time/mockup_count:.3f}s\n  Output directory: {mockup_output_dir}\n{'='*60}"
+    print(msg)
+    log_file.write(msg + "\n")
+    
+    return total_time, mockup_count, individual_times
+
+
+def generate_comparison_chart(original_time, optimized_time, original_times, optimized_times, output_path):
+    """
+    Generate a comparison chart showing performance metrics
+    
+    Args:
+        original_time: total time for original
+        optimized_time: total time for optimized
+        original_times: list of individual mockup times for original
+        optimized_times: list of individual mockup times for optimized
+        output_path: path to save the chart
+    """
+    fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+    fig.suptitle('Mockup Generation Performance Comparison', fontsize=16, fontweight='bold')
+    
+    # 1. Total Time Comparison (Bar Chart)
+    ax1 = axes[0, 0]
+    categories = ['Original', 'Optimized']
+    times = [original_time, optimized_time]
+    colors = ['#FF6B6B', '#4ECDC4']
+    bars = ax1.bar(categories, times, color=colors, alpha=0.8, edgecolor='black')
+    ax1.set_ylabel('Time (seconds)', fontweight='bold')
+    ax1.set_title('Total Generation Time', fontweight='bold')
+    ax1.grid(axis='y', alpha=0.3)
+    
+    # Add value labels on bars
+    for bar in bars:
+        height = bar.get_height()
+        ax1.text(bar.get_x() + bar.get_width()/2., height,
+                f'{height:.2f}s',
+                ha='center', va='bottom', fontweight='bold')
+    
+    # 2. Average Time per Mockup (Bar Chart)
+    ax2 = axes[0, 1]
+    avg_original = np.mean(original_times)
+    avg_optimized = np.mean(optimized_times)
+    avgs = [avg_original, avg_optimized]
+    bars = ax2.bar(categories, avgs, color=colors, alpha=0.8, edgecolor='black')
+    ax2.set_ylabel('Time (seconds)', fontweight='bold')
+    ax2.set_title('Average Time per Mockup', fontweight='bold')
+    ax2.grid(axis='y', alpha=0.3)
+    
+    for bar in bars:
+        height = bar.get_height()
+        ax2.text(bar.get_x() + bar.get_width()/2., height,
+                f'{height:.3f}s',
+                ha='center', va='bottom', fontweight='bold')
+    
+    # 3. Individual Mockup Times (Line Chart)
+    ax3 = axes[1, 0]
+    x = range(1, len(original_times) + 1)
+    ax3.plot(x, original_times, marker='o', label='Original', color=colors[0], linewidth=2)
+    ax3.plot(x, optimized_times, marker='s', label='Optimized', color=colors[1], linewidth=2)
+    ax3.set_xlabel('Mockup Number', fontweight='bold')
+    ax3.set_ylabel('Time (seconds)', fontweight='bold')
+    ax3.set_title('Individual Mockup Generation Times', fontweight='bold')
+    ax3.legend()
+    ax3.grid(True, alpha=0.3)
+    
+    # 4. Performance Metrics (Text Summary)
+    ax4 = axes[1, 1]
+    ax4.axis('off')
+    
+    speedup = original_time / optimized_time if optimized_time > 0 else 0
+    time_saved = original_time - optimized_time
+    percent_saved = (time_saved / original_time * 100) if original_time > 0 else 0
+    
+    summary_text = f"""
+    PERFORMANCE METRICS
+    {'='*30}
+    
+    Original:
+      • Total Time: {original_time:.3f}s
+      • Average/Mockup: {avg_original:.3f}s
+      • Mockups: {len(original_times)}
+    
+    Optimized:
+      • Total Time: {optimized_time:.3f}s
+      • Average/Mockup: {avg_optimized:.3f}s
+      • Mockups: {len(optimized_times)}
+    
+    Improvement:
+      • Speedup: {speedup:.2f}x faster
+      • Time Saved: {time_saved:.3f}s
+      • Reduction: {percent_saved:.1f}%
+    """
+    
+    ax4.text(0.1, 0.5, summary_text, fontsize=11, family='monospace',
+             verticalalignment='center', bbox=dict(boxstyle='round',
+             facecolor='wheat', alpha=0.3))
+    
+    plt.tight_layout()
+    plt.savefig(output_path, dpi=150, bbox_inches='tight')
+    plt.close()
+    print(f"\n✓ Comparison chart saved to: {output_path}")
+
+
 def process_for_side(mockup_info):
     side_name = mockup_info["name"]
 
@@ -368,6 +681,73 @@ async def main():
     output_path = os.path.join(f"{ROOT_DIR}/{PREFIX}", "mockup_infos.optimized_web.json")
     with open(output_path, 'w') as f:
         f.write(web_mockup_infos)
+    
+    # Generate mockups from artwork - both original and optimized
+    artwork_dir = os.path.join(ROOT_DIR, "optimized-mockup-infos/artworks")
+    mockup_output_base_dir = os.path.join(ROOT_DIR, PREFIX, "mockups-output")
+    
+    # Create log file
+    log_path = os.path.join(mockup_output_base_dir, "performance_log.txt")
+    os.makedirs(mockup_output_base_dir, exist_ok=True)
+    
+    with open(log_path, 'w') as log_file:
+        log_file.write("="*60 + "\n")
+        log_file.write("MOCKUP GENERATION COMPARISON\n")
+        log_file.write("="*60 + "\n")
+        log_file.write(f"Timestamp: {time.strftime('%Y-%m-%d %H:%M:%S')}\n")
+        log_file.write("="*60 + "\n")
+        
+        print("\n" + "="*60)
+        print("MOCKUP GENERATION COMPARISON")
+        print("="*60)
+        
+        # Load original mockup_infos
+        original_path = os.path.join(f"{ROOT_DIR}/{PREFIX}", "mockup_infos.downloaded.json")
+        with open(original_path, 'r') as f:
+            original_mockup_infos = json.load(f)
+        
+        # Generate original mockups
+        original_time, original_count, original_times = generate_mockups_from_config(
+            original_mockup_infos,
+            'original',
+            artwork_dir,
+            mockup_output_base_dir,
+            log_file
+        )
+        
+        # Generate optimized mockups
+        optimized_time, optimized_count, optimized_times = generate_mockups_from_config(
+            mockup_infos,
+            'optimized',
+            artwork_dir,
+            mockup_output_base_dir,
+            log_file
+        )
+        
+        # Final comparison
+        comparison_text = f"\n{'='*60}\nFINAL COMPARISON\n{'='*60}\n"
+        comparison_text += f"Original:\n  Mockups: {original_count}\n  Total time: {original_time:.3f}s\n"
+        comparison_text += f"  Avg time/mockup: {original_time/original_count:.3f}s\n\n"
+        comparison_text += f"Optimized:\n  Mockups: {optimized_count}\n  Total time: {optimized_time:.3f}s\n"
+        comparison_text += f"  Avg time/mockup: {optimized_time/optimized_count:.3f}s\n\n"
+        
+        if original_time > 0:
+            speedup = original_time / optimized_time
+            time_saved = original_time - optimized_time
+            comparison_text += f"Performance Improvement:\n"
+            comparison_text += f"  Speedup: {speedup:.2f}x faster\n"
+            comparison_text += f"  Time saved: {time_saved:.3f}s ({time_saved/original_time*100:.1f}%)\n"
+        
+        comparison_text += "="*60 + "\n"
+        
+        print(comparison_text)
+        log_file.write(comparison_text)
+        
+        print(f"\n✓ Performance log saved to: {log_path}")
+    
+    # Generate comparison chart
+    chart_path = os.path.join(mockup_output_base_dir, "performance_comparison.png")
+    generate_comparison_chart(original_time, optimized_time, original_times, optimized_times, chart_path)
     
 
 if __name__ == "__main__":

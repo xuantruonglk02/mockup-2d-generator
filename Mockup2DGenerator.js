@@ -94,12 +94,13 @@ class Mockup2DGenerator {
     
             void main() {
                 vec4 color = texture2D(u_texture, v_texCoord);
-                color.a *= u_opacity;
                 if (u_useMask) {
                     vec4 mask = texture2D(u_mask, v_maskCoord);
                     float maskValue = mask.a;
-                    color *= maskValue;
+                    color.a *= maskValue;
                 }
+                color.a *= u_opacity;
+                color.rgb *= color.a;
                 gl_FragColor = color;
             }
         `
@@ -770,7 +771,7 @@ class Mockup2DGenerator {
      */
     _glSetBlendMode(mode) {
         if (mode === 'normal') {
-            this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA)
+            this.gl.blendFunc(this.gl.ONE, this.gl.ONE_MINUS_SRC_ALPHA)
         } else if (mode === 'multiply') {
             this.gl.blendFunc(this.gl.DST_COLOR, this.gl.ONE_MINUS_SRC_ALPHA)
         } else if (mode === 'screen') {

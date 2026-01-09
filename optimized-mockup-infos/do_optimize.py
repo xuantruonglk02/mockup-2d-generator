@@ -178,12 +178,43 @@ def process_model_parts(side_name, parts):
     }
 
 
-def join_model_data(base, model, mask_path):
+def remove_noise_pixels(mask_path, min_area=100):
+    """
+    Remove noise pixels outside the main mask contours.
+    
+    Args:
+        mask_path: path to the mask image
+        min_area: minimum contour area to keep (pixels smaller than this are removed)
+    
+    Returns:
+        cleaned mask as numpy array (boolean)
+    """
     mask_img = Image.open(mask_path).convert('RGBA')
     mask_array = np.array(mask_img)
     alpha_channel = mask_array[:, :, 3]
-    has_alpha = alpha_channel > 0
-    base[has_alpha] = model[has_alpha]
+    
+    # Convert to binary mask
+    binary_mask = (alpha_channel > 0).astype(np.uint8) * 255
+    
+    # Find all contours
+    contours, _ = cv2.findContours(binary_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    
+    # Create clean mask
+    clean_mask = np.zeros_like(binary_mask)
+    
+    # Keep only contours above minimum area
+    for contour in contours:
+        area = cv2.contourArea(contour)
+        if area >= min_area:
+            cv2.drawContours(clean_mask, [contour], -1, 255, thickness=cv2.FILLED)
+    
+    return clean_mask > 0
+
+
+def join_model_data(base, model, mask_path):
+    # Remove noise pixels from mask first
+    clean_mask = remove_noise_pixels(mask_path)
+    base[clean_mask] = model[clean_mask]
 
 
 def resize_model(model_data, mask, target_size):
@@ -684,28 +715,11 @@ def process_for_side(mockup_info):
     return mockup_info
 
 
-async def main():    
-    with open(f"{ROOT_DIR}/{PREFIX}/mockup_infos.json", 'r') as f:
-        mockup_infos = json.load(f)
-    
-    downloaded_mockup_infos_path = await download_mockup_infos(mockup_infos)
-    with open(downloaded_mockup_infos_path, 'r') as f:
-        mockup_infos = json.load(f)
-
-    for mockup_info in mockup_infos['mockup_infos']:
-        mockup_info = process_for_side(mockup_info)
-    
-    output_path = os.path.join(f"{ROOT_DIR}/{PREFIX}", "mockup_infos.optimized.json")
-    with open(output_path, 'w') as f:
-        json.dump(mockup_infos, f, indent=2)
-    
-    web_mockup_infos = json.dumps(mockup_infos, indent=2)
-    web_mockup_infos = web_mockup_infos.replace(ROOT_DIR, ".")
-    output_path = os.path.join(f"{ROOT_DIR}/{PREFIX}", "mockup_infos.optimized_web.json")
-    with open(output_path, 'w') as f:
-        f.write(web_mockup_infos)
-    
-    # Generate mockups from artwork - both original and optimized
+def run_mockup_generation():
+    """
+    Standalone function to generate mockups from artwork.
+    Can be run independently without going through the optimization process.
+    """
     artwork_dir = os.path.join(ROOT_DIR, "optimized-mockup-infos/artworks")
     mockup_output_base_dir = os.path.join(ROOT_DIR, PREFIX, "mockups-output")
     
@@ -729,6 +743,11 @@ async def main():
         with open(original_path, 'r') as f:
             original_mockup_infos = json.load(f)
         
+        # Load optimized mockup_infos
+        optimized_path = os.path.join(f"{ROOT_DIR}/{PREFIX}", "mockup_infos.optimized.json")
+        with open(optimized_path, 'r') as f:
+            optimized_mockup_infos = json.load(f)
+        
         # Generate original mockups
         original_time, original_count, original_times, original_warp_count = generate_mockups_from_config(
             original_mockup_infos,
@@ -740,7 +759,7 @@ async def main():
         
         # Generate optimized mockups
         optimized_time, optimized_count, optimized_times, optimized_warp_count = generate_mockups_from_config(
-            mockup_infos,
+            optimized_mockup_infos,
             'optimized',
             artwork_dir,
             mockup_output_base_dir,
@@ -778,7 +797,32 @@ async def main():
     chart_path = os.path.join(mockup_output_base_dir, "performance_comparison.png")
     generate_comparison_chart(original_time, optimized_time, original_times, optimized_times,
                              original_warp_count, optimized_warp_count, chart_path)
+
+
+async def main():
+    with open(f"{ROOT_DIR}/{PREFIX}/mockup_infos.json", 'r') as f:
+        mockup_infos = json.load(f)
     
+    downloaded_mockup_infos_path = await download_mockup_infos(mockup_infos)
+    with open(downloaded_mockup_infos_path, 'r') as f:
+        mockup_infos = json.load(f)
+
+    for mockup_info in mockup_infos['mockup_infos']:
+        mockup_info = process_for_side(mockup_info)
+    
+    output_path = os.path.joinDIR(f"{ROOT_DIR}/{PREFIX}", "mockup_infos.optimized.json")
+    with open(output_path, 'w') as f:
+        json.dump(mockup_infos, f, indent=2)
+    
+    web_mockup_infos = json.dumps(mockup_infos, indent=2)
+    web_mockup_infos = web_mockup_infos.replace(ROOT_DIR, ".")
+    output_path = os.path.join(f"{ROOT_DIR}/{PREFIX}", "mockup_infos.optimized_web.json")
+    with open(output_path, 'w') as f:
+        f.write(web_mockup_infos)
+    
+    
+    run_mockup_generation()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

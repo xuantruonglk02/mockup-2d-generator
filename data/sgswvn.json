@@ -1,0 +1,94 @@
+{
+    "mockup_infos": [
+        {
+            "name": "Circle1_Circle2",
+            "side": "front",
+            "type": "warp-new-standard-v2",
+            "parts": [
+                {
+                    "name": "Circle1_Circle2.BG",
+                    "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Circle1_Circle2.BG.png"
+                },
+                {
+                    "name": "Circle1_Circle2.Circle1_Circle2.Circle2.fx.linear_dodge_2",
+                    "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Circle1_Circle2.Circle1_Circle2.Circle2.fx.linear_dodge_2.png",
+                    "blend_mode": "linear_dodge"
+                },
+                {
+                    "name": "Circle1_Circle2.Circle1_Circle2.Circle2.fx.screen_1",
+                    "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Circle1_Circle2.Circle1_Circle2.Circle2.fx.screen_1.png",
+                    "blend_mode": "screen"
+                },
+                {
+                    "name": "Circle1_Circle2.Circle1_Circle2.Circle2.fx.multiply_0",
+                    "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Circle1_Circle2.Circle1_Circle2.Circle2.fx.multiply_0.png",
+                    "blend_mode": "multiply"
+                },
+                {
+                    "name": "Circle1_Circle2.Circle1_Circle2.Circle2.Design.Design_0",
+                    "side": "front",
+                    "mask_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Circle1_Circle2.Circle1_Circle2.Circle2.Design.Design_0.png",
+                    "warp_type": "warp_npy",
+                    "warp_info": {
+                        "model": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/model/Circle1_Circle2.Circle1_Circle2.Circle2.Design.Design_0.model.npy",
+                        "artwork_width": 3000,
+                        "artwork_height": 3000,
+                        "model_json": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/695f5b1d7fc771a4908ec810/model/Circle1_Circle2.Circle1_Circle2.Circle2.Design.Design_0.model.100x100.json"
+                    },
+                    "effects": [],
+                    "fill": 100,
+                    "opacity": 70
+                },
+                {
+                    "name": "Circle1_Circle2.Circle1_Circle2.Circle2.Circle2",
+                    "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Circle1_Circle2.Circle1_Circle2.Circle2.Circle2.png"
+                },
+                {
+                    "name": "Circle1_Circle2.Circle1_Circle2.Circle1.Design.Design_0",
+                    "side": "front",
+                    "mask_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Circle1_Circle2.Circle1_Circle2.Circle1.Design.Design_0.png",
+                    "warp_type": "warp_npy",
+                    "warp_info": {
+                        "model": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/model/Circle1_Circle2.Circle1_Circle2.Circle1.Design.Design_0.model.npy",
+                        "artwork_width": 3000,
+                        "artwork_height": 3000,
+                        "model_json": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/695f5b1d7fc771a4908ec810/model/Circle1_Circle2.Circle1_Circle2.Circle1.Design.Design_0.model.100x100.json"
+                    },
+                    "effects": [],
+                    "fill": 100,
+                    "opacity": 70
+                },
+                {
+                    "name": "Circle1_Circle2.Circle1_Circle2.Circle1.fx.linear_dodge_2",
+                    "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Circle1_Circle2.Circle1_Circle2.Circle1.fx.linear_dodge_2.png",
+                    "blend_mode": "linear_dodge"
+                },
+                {
+                    "name": "Circle1_Circle2.Circle1_Circle2.Circle1.fx.screen_1",
+                    "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Circle1_Circle2.Circle1_Circle2.Circle1.fx.screen_1.png",
+                    "blend_mode": "screen"
+                },
+                {
+                    "name": "Circle1_Circle2.Circle1_Circle2.Circle1.fx.multiply_0",
+                    "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Circle1_Circle2.Circle1_Circle2.Circle1.fx.multiply_0.png",
+                    "blend_mode": "multiply"
+                },
+                {
+                    "name": "Circle1_Circle2.Circle1_Circle2.Circle1.Circle1",
+                    "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Circle1_Circle2.Circle1_Circle2.Circle1.Circle1.png"
+                }
+            ],
+            "size": {
+                "width": 1000,
+                "height": 1000
+            }
+        }
+    ],
+    "consistency_name": "stained-glass-suncatcher-for-window-hanging",
+    "artwork_side_info": "artwork-per-side",
+    "prefix_name": "stained-glass-suncatcher-for-window-hanging",
+    "version": "v2",
+    "use_origin_artwork": true,
+    "shape_size": [3000, 3000],
+    "use_client_mockup": true
+}

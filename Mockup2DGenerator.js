@@ -9,6 +9,7 @@
  *  warp_type: string,
  *  warp_info: {artwork_width: number, artwork_height: number, model_json: string},
  *  mask_path: string,
+ *  opacity: number,
  * }} MockupDesignLayer
  *
  * @typedef {{name: string, blend_mode: string, image_path: string}} MockupBlendLayer
@@ -89,9 +90,11 @@ class Mockup2DGenerator {
             uniform sampler2D u_texture;
             uniform sampler2D u_mask;
             uniform bool u_useMask;
+            uniform float u_opacity;
     
             void main() {
                 vec4 color = texture2D(u_texture, v_texCoord);
+                color.a *= u_opacity;
                 if (u_useMask) {
                     vec4 mask = texture2D(u_mask, v_maskCoord);
                     float maskValue = mask.a;
@@ -124,6 +127,7 @@ class Mockup2DGenerator {
             uTexture: gl.getUniformLocation(program, 'u_texture'),
             uMask: gl.getUniformLocation(program, 'u_mask'),
             uUseMask: gl.getUniformLocation(program, 'u_useMask'),
+            uOpacity: gl.getUniformLocation(program, 'u_opacity'),
         }
 
         this.gl = gl
@@ -194,7 +198,7 @@ class Mockup2DGenerator {
         const imagePromises = []
 
         for (const layer of layers) {
-            if (layer.image_path) {
+            if (layer.image_path && layer.name !== `${mockupInfo.name}.BG`) {
                 imagePromises.push(this._loadImage(layer.image_path, canvasSize))
             }
             if (layer.color_mask_path) {
@@ -316,6 +320,7 @@ class Mockup2DGenerator {
         // Set texture uniform
         this.gl.uniform1i(this.locations.uTexture, 0)
         this.gl.uniform1i(this.locations.uUseMask, 0)
+        this.gl.uniform1f(this.locations.uOpacity, 1)
 
         this.gl.activeTexture(this.gl.TEXTURE0)
         this.gl.bindTexture(this.gl.TEXTURE_2D, texture)
@@ -362,6 +367,7 @@ class Mockup2DGenerator {
         this.gl.uniform1i(this.locations.uTexture, 0)
         this.gl.uniform1i(this.locations.uMask, 1)
         this.gl.uniform1i(this.locations.uUseMask, 1)
+        this.gl.uniform1f(this.locations.uOpacity, 1)
 
         // Bind textures
         this.gl.activeTexture(this.gl.TEXTURE0)
@@ -402,6 +408,7 @@ class Mockup2DGenerator {
         this.gl.uniform1i(this.locations.uTexture, 0)
         this.gl.uniform1i(this.locations.uMask, 1)
         this.gl.uniform1i(this.locations.uUseMask, 1)
+        this.gl.uniform1f(this.locations.uOpacity, 1)
 
         // Bind textures
         this.gl.activeTexture(this.gl.TEXTURE0)
@@ -418,8 +425,8 @@ class Mockup2DGenerator {
      * @param {Image} artwork
      */
     async glWarpAndDrawDesign(layer, artwork) {
-        const {mask_path, warp_info} = layer
-        const {model_json} = warp_info
+        const { mask_path, warp_info, opacity } = layer
+        const { model_json } = warp_info
 
         const canvasSize = [this.renderCanvas.width, this.renderCanvas.height]
 
@@ -462,6 +469,7 @@ class Mockup2DGenerator {
         this.gl.uniform1i(this.locations.uTexture, 0)
         this.gl.uniform1i(this.locations.uMask, 1)
         this.gl.uniform1i(this.locations.uUseMask, 1)
+        this.gl.uniform1f(this.locations.uOpacity, (opacity ?? 100) / 100)
 
         this.gl.activeTexture(this.gl.TEXTURE0)
         this.gl.bindTexture(this.gl.TEXTURE_2D, designTexture)
@@ -494,8 +502,7 @@ class Mockup2DGenerator {
 
                 if (index < mappedPoints.length) {
                     let [srcX, srcY] = mappedPoints[index]
-                    // texCoords.push(this._clamp(srcX, 0, 1), this._clamp(srcY, 0, 1))
-                    texCoords.push(srcX, srcY)
+                    texCoords.push(this._clamp(srcX, 0, 1), this._clamp(srcY, 0, 1))
                 } else {
                     texCoords.push(j / (M - 1), i / (N - 1))
                 }
@@ -585,6 +592,7 @@ class Mockup2DGenerator {
 
         const response = await fetch(url)
         const data = await response.json()
+        this.warpDataCache.set(url, data)
         return data
     }
 
@@ -756,8 +764,14 @@ class Mockup2DGenerator {
         return oCanvas
     }
 
+    /**
+     *
+     * @param {'normal' | 'multiply' | 'screen' | 'linear_dodge' | 'color_dodge' | 'lighten'} mode
+     */
     _glSetBlendMode(mode) {
-        if (mode === 'multiply') {
+        if (mode === 'normal') {
+            this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA)
+        } else if (mode === 'multiply') {
             this.gl.blendFunc(this.gl.DST_COLOR, this.gl.ONE_MINUS_SRC_ALPHA)
         } else if (mode === 'screen') {
             this.gl.blendFunc(this.gl.ONE, this.gl.ONE_MINUS_SRC_COLOR)
@@ -765,8 +779,11 @@ class Mockup2DGenerator {
             this.gl.blendFunc(this.gl.ONE, this.gl.ONE)
         } else if (mode === 'color_dodge') {
             this.gl.blendFunc(this.gl.ONE, this.gl.ONE)
+        } else if (mode === 'lighten') {
+            this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE)
+            this.gl.blendEquation(this.gl.MAX)
         } else {
-            this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA)
+            throw new Error('Unsupported blend mode: ' + mode)
         }
     }
 

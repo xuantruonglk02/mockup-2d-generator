@@ -1,0 +1,772 @@
+{
+    "mockup_infos": [
+      {
+        "name": "Circle1",
+        "side": "front",
+        "type": "warp-new-standard-v2",
+        "parts": [
+          {
+            "name": "Circle1.BG",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Circle1.BG.png"
+          },
+          {
+            "name": "Circle1.Circle1.Design.Design_0",
+            "side": "front",
+            "mask_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Circle1.Circle1.Design.Design_0.png",
+            "warp_type": "warp_npy",
+            "warp_info": {
+              "model": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/model/Circle1.Circle1.Design.Design_0.model.npy",
+              "artwork_width": 3000,
+              "artwork_height": 3000,
+              "model_json": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/695f5b1d7fc771a4908ec810/model/Circle1.Circle1.Design.Design_0.model.100x100.json"
+            },
+            "effects": [],
+            "fill": 100,
+            "opacity": 70
+          },
+          {
+            "name": "Circle1.Circle1.fx.linear_dodge_2",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Circle1.Circle1.fx.linear_dodge_2.png",
+            "blend_mode": "linear_dodge"
+          },
+          {
+            "name": "Circle1.Circle1.fx.screen_1",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Circle1.Circle1.fx.screen_1.png",
+            "blend_mode": "screen"
+          },
+          {
+            "name": "Circle1.Circle1.fx.multiply_0",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Circle1.Circle1.fx.multiply_0.png",
+            "blend_mode": "multiply"
+          },
+          {
+            "name": "Circle1.Circle1.Circle1",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Circle1.Circle1.Circle1.png"
+          }
+        ],
+        "size": {
+          "width": 1000,
+          "height": 1000
+        }
+      },
+      {
+        "name": "Circle2",
+        "side": "front",
+        "type": "warp-new-standard-v2",
+        "parts": [
+          {
+            "name": "Circle2.BG",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Circle2.BG.png"
+          },
+          {
+            "name": "Circle2.Circle2.Design.Design_0",
+            "side": "front",
+            "mask_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Circle2.Circle2.Design.Design_0.png",
+            "warp_type": "warp_npy",
+            "warp_info": {
+              "model": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/model/Circle2.Circle2.Design.Design_0.model.npy",
+              "artwork_width": 3000,
+              "artwork_height": 3000,
+              "model_json": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/695f5b1d7fc771a4908ec810/model/Circle2.Circle2.Design.Design_0.model.100x100.json"
+            },
+            "effects": [],
+            "fill": 100,
+            "opacity": 70
+          },
+          {
+            "name": "Circle2.Circle2.fx.linear_dodge_2",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Circle2.Circle2.fx.linear_dodge_2.png",
+            "blend_mode": "linear_dodge"
+          },
+          {
+            "name": "Circle2.Circle2.fx.screen_1",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Circle2.Circle2.fx.screen_1.png",
+            "blend_mode": "screen"
+          },
+          {
+            "name": "Circle2.Circle2.fx.multiply_0",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Circle2.Circle2.fx.multiply_0.png",
+            "blend_mode": "multiply"
+          },
+          {
+            "name": "Circle2.Circle2.Circle2",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Circle2.Circle2.Circle2.png"
+          }
+        ],
+        "size": {
+          "width": 1000,
+          "height": 1000
+        }
+      },
+      {
+        "name": "Circle1_Circle2",
+        "side": "front",
+        "type": "warp-new-standard-v2",
+        "parts": [
+          {
+            "name": "Circle1_Circle2.BG",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Circle1_Circle2.BG.png"
+          },
+          {
+            "name": "Circle1_Circle2.Circle1_Circle2.Circle2.fx.linear_dodge_2",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Circle1_Circle2.Circle1_Circle2.Circle2.fx.linear_dodge_2.png",
+            "blend_mode": "linear_dodge"
+          },
+          {
+            "name": "Circle1_Circle2.Circle1_Circle2.Circle2.fx.screen_1",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Circle1_Circle2.Circle1_Circle2.Circle2.fx.screen_1.png",
+            "blend_mode": "screen"
+          },
+          {
+            "name": "Circle1_Circle2.Circle1_Circle2.Circle2.fx.multiply_0",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Circle1_Circle2.Circle1_Circle2.Circle2.fx.multiply_0.png",
+            "blend_mode": "multiply"
+          },
+          {
+            "name": "Circle1_Circle2.Circle1_Circle2.Circle2.Design.Design_0",
+            "side": "front",
+            "mask_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Circle1_Circle2.Circle1_Circle2.Circle2.Design.Design_0.png",
+            "warp_type": "warp_npy",
+            "warp_info": {
+              "model": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/model/Circle1_Circle2.Circle1_Circle2.Circle2.Design.Design_0.model.npy",
+              "artwork_width": 3000,
+              "artwork_height": 3000,
+              "model_json": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/695f5b1d7fc771a4908ec810/model/Circle1_Circle2.Circle1_Circle2.Circle2.Design.Design_0.model.100x100.json"
+            },
+            "effects": [],
+            "fill": 100,
+            "opacity": 70
+          },
+          {
+            "name": "Circle1_Circle2.Circle1_Circle2.Circle2.Circle2",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Circle1_Circle2.Circle1_Circle2.Circle2.Circle2.png"
+          },
+          {
+            "name": "Circle1_Circle2.Circle1_Circle2.Circle1.Design.Design_0",
+            "side": "front",
+            "mask_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Circle1_Circle2.Circle1_Circle2.Circle1.Design.Design_0.png",
+            "warp_type": "warp_npy",
+            "warp_info": {
+              "model": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/model/Circle1_Circle2.Circle1_Circle2.Circle1.Design.Design_0.model.npy",
+              "artwork_width": 3000,
+              "artwork_height": 3000,
+              "model_json": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/695f5b1d7fc771a4908ec810/model/Circle1_Circle2.Circle1_Circle2.Circle1.Design.Design_0.model.100x100.json"
+            },
+            "effects": [],
+            "fill": 100,
+            "opacity": 70
+          },
+          {
+            "name": "Circle1_Circle2.Circle1_Circle2.Circle1.fx.linear_dodge_2",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Circle1_Circle2.Circle1_Circle2.Circle1.fx.linear_dodge_2.png",
+            "blend_mode": "linear_dodge"
+          },
+          {
+            "name": "Circle1_Circle2.Circle1_Circle2.Circle1.fx.screen_1",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Circle1_Circle2.Circle1_Circle2.Circle1.fx.screen_1.png",
+            "blend_mode": "screen"
+          },
+          {
+            "name": "Circle1_Circle2.Circle1_Circle2.Circle1.fx.multiply_0",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Circle1_Circle2.Circle1_Circle2.Circle1.fx.multiply_0.png",
+            "blend_mode": "multiply"
+          },
+          {
+            "name": "Circle1_Circle2.Circle1_Circle2.Circle1.Circle1",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Circle1_Circle2.Circle1_Circle2.Circle1.Circle1.png"
+          }
+        ],
+        "size": {
+          "width": 1000,
+          "height": 1000
+        }
+      },
+      {
+        "name": "Heart1",
+        "side": "front",
+        "type": "warp-new-standard-v2",
+        "parts": [
+          {
+            "name": "Heart1.BG",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Heart1.BG.png"
+          },
+          {
+            "name": "Heart1.Heart1.Design.Design_0",
+            "side": "front",
+            "mask_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Heart1.Heart1.Design.Design_0.png",
+            "warp_type": "warp_npy",
+            "warp_info": {
+              "model": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/model/Heart1.Heart1.Design.Design_0.model.npy",
+              "artwork_width": 3000,
+              "artwork_height": 3000,
+              "model_json": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/695f5b1d7fc771a4908ec810/model/Heart1.Heart1.Design.Design_0.model.100x100.json"
+            },
+            "effects": [],
+            "fill": 100,
+            "opacity": 70
+          },
+          {
+            "name": "Heart1.Heart1.fx.linear_dodge_2",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Heart1.Heart1.fx.linear_dodge_2.png",
+            "blend_mode": "linear_dodge"
+          },
+          {
+            "name": "Heart1.Heart1.fx.screen_1",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Heart1.Heart1.fx.screen_1.png",
+            "blend_mode": "screen"
+          },
+          {
+            "name": "Heart1.Heart1.fx.multiply_0",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Heart1.Heart1.fx.multiply_0.png",
+            "blend_mode": "multiply"
+          },
+          {
+            "name": "Heart1.Heart1.Heart1",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Heart1.Heart1.Heart1.png"
+          }
+        ],
+        "size": {
+          "width": 1000,
+          "height": 1000
+        }
+      },
+      {
+        "name": "Heart2",
+        "side": "front",
+        "type": "warp-new-standard-v2",
+        "parts": [
+          {
+            "name": "Heart2.BG",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Heart2.BG.png"
+          },
+          {
+            "name": "Heart2.Heart2.Design.Design_0",
+            "side": "front",
+            "mask_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Heart2.Heart2.Design.Design_0.png",
+            "warp_type": "warp_npy",
+            "warp_info": {
+              "model": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/model/Heart2.Heart2.Design.Design_0.model.npy",
+              "artwork_width": 3000,
+              "artwork_height": 3000,
+              "model_json": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/695f5b1d7fc771a4908ec810/model/Heart2.Heart2.Design.Design_0.model.100x100.json"
+            },
+            "effects": [],
+            "fill": 100,
+            "opacity": 70
+          },
+          {
+            "name": "Heart2.Heart2.fx.linear_dodge_2",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Heart2.Heart2.fx.linear_dodge_2.png",
+            "blend_mode": "linear_dodge"
+          },
+          {
+            "name": "Heart2.Heart2.fx.screen_1",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Heart2.Heart2.fx.screen_1.png",
+            "blend_mode": "screen"
+          },
+          {
+            "name": "Heart2.Heart2.fx.multiply_0",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Heart2.Heart2.fx.multiply_0.png",
+            "blend_mode": "multiply"
+          },
+          {
+            "name": "Heart2.Heart2.Heart2",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Heart2.Heart2.Heart2.png"
+          }
+        ],
+        "size": {
+          "width": 1000,
+          "height": 1000
+        }
+      },
+      {
+        "name": "Heart1_Heart2",
+        "side": "front",
+        "type": "warp-new-standard-v2",
+        "parts": [
+          {
+            "name": "Heart1_Heart2.BG",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Heart1_Heart2.BG.png"
+          },
+          {
+            "name": "Heart1_Heart2.Heart1_Heart2.Heart2.fx.linear_dodge_2",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Heart1_Heart2.Heart1_Heart2.Heart2.fx.linear_dodge_2.png",
+            "blend_mode": "linear_dodge"
+          },
+          {
+            "name": "Heart1_Heart2.Heart1_Heart2.Heart2.fx.screen_1",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Heart1_Heart2.Heart1_Heart2.Heart2.fx.screen_1.png",
+            "blend_mode": "screen"
+          },
+          {
+            "name": "Heart1_Heart2.Heart1_Heart2.Heart2.fx.multiply_0",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Heart1_Heart2.Heart1_Heart2.Heart2.fx.multiply_0.png",
+            "blend_mode": "multiply"
+          },
+          {
+            "name": "Heart1_Heart2.Heart1_Heart2.Heart2.Design.Design_0",
+            "side": "front",
+            "mask_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Heart1_Heart2.Heart1_Heart2.Heart2.Design.Design_0.png",
+            "warp_type": "warp_npy",
+            "warp_info": {
+              "model": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/model/Heart1_Heart2.Heart1_Heart2.Heart2.Design.Design_0.model.npy",
+              "artwork_width": 3000,
+              "artwork_height": 3000,
+              "model_json": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/695f5b1d7fc771a4908ec810/model/Heart1_Heart2.Heart1_Heart2.Heart2.Design.Design_0.model.100x100.json"
+            },
+            "effects": [],
+            "fill": 100,
+            "opacity": 70
+          },
+          {
+            "name": "Heart1_Heart2.Heart1_Heart2.Heart2.Heart2",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Heart1_Heart2.Heart1_Heart2.Heart2.Heart2.png"
+          },
+          {
+            "name": "Heart1_Heart2.Heart1_Heart2.Heart1.Design.Design_0",
+            "side": "front",
+            "mask_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Heart1_Heart2.Heart1_Heart2.Heart1.Design.Design_0.png",
+            "warp_type": "warp_npy",
+            "warp_info": {
+              "model": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/model/Heart1_Heart2.Heart1_Heart2.Heart1.Design.Design_0.model.npy",
+              "artwork_width": 3000,
+              "artwork_height": 3000,
+              "model_json": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/695f5b1d7fc771a4908ec810/model/Heart1_Heart2.Heart1_Heart2.Heart1.Design.Design_0.model.100x100.json"
+            },
+            "effects": [],
+            "fill": 100,
+            "opacity": 70
+          },
+          {
+            "name": "Heart1_Heart2.Heart1_Heart2.Heart1.fx.linear_dodge_2",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Heart1_Heart2.Heart1_Heart2.Heart1.fx.linear_dodge_2.png",
+            "blend_mode": "linear_dodge"
+          },
+          {
+            "name": "Heart1_Heart2.Heart1_Heart2.Heart1.fx.screen_1",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Heart1_Heart2.Heart1_Heart2.Heart1.fx.screen_1.png",
+            "blend_mode": "screen"
+          },
+          {
+            "name": "Heart1_Heart2.Heart1_Heart2.Heart1.fx.multiply_0",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Heart1_Heart2.Heart1_Heart2.Heart1.fx.multiply_0.png",
+            "blend_mode": "multiply"
+          },
+          {
+            "name": "Heart1_Heart2.Heart1_Heart2.Heart1.Heart1",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Heart1_Heart2.Heart1_Heart2.Heart1.Heart1.png"
+          }
+        ],
+        "size": {
+          "width": 1000,
+          "height": 1000
+        }
+      },
+      {
+        "name": "Rec1",
+        "side": "front",
+        "type": "warp-new-standard-v2",
+        "parts": [
+          {
+            "name": "Rec1.BG",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Rec1.BG.png"
+          },
+          {
+            "name": "Rec1.Rec1.Design.Design_0",
+            "side": "front",
+            "mask_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Rec1.Rec1.Design.Design_0.png",
+            "warp_type": "warp_npy",
+            "warp_info": {
+              "model": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/model/Rec1.Rec1.Design.Design_0.model.npy",
+              "artwork_width": 3000,
+              "artwork_height": 3000,
+              "model_json": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/695f5b1d7fc771a4908ec810/model/Rec1.Rec1.Design.Design_0.model.100x100.json"
+            },
+            "effects": [],
+            "fill": 100,
+            "opacity": 70
+          },
+          {
+            "name": "Rec1.Rec1.fx.linear_dodge_2",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Rec1.Rec1.fx.linear_dodge_2.png",
+            "blend_mode": "linear_dodge"
+          },
+          {
+            "name": "Rec1.Rec1.fx.screen_1",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Rec1.Rec1.fx.screen_1.png",
+            "blend_mode": "screen"
+          },
+          {
+            "name": "Rec1.Rec1.fx.multiply_0",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Rec1.Rec1.fx.multiply_0.png",
+            "blend_mode": "multiply"
+          },
+          {
+            "name": "Rec1.Rec1.Rec1",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Rec1.Rec1.Rec1.png"
+          }
+        ],
+        "size": {
+          "width": 1000,
+          "height": 1000
+        }
+      },
+      {
+        "name": "Rec2",
+        "side": "front",
+        "type": "warp-new-standard-v2",
+        "parts": [
+          {
+            "name": "Rec2.BG",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Rec2.BG.png"
+          },
+          {
+            "name": "Rec2.Rec2.Design.Design_0",
+            "side": "front",
+            "mask_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Rec2.Rec2.Design.Design_0.png",
+            "warp_type": "warp_npy",
+            "warp_info": {
+              "model": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/model/Rec2.Rec2.Design.Design_0.model.npy",
+              "artwork_width": 3000,
+              "artwork_height": 3000,
+              "model_json": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/695f5b1d7fc771a4908ec810/model/Rec2.Rec2.Design.Design_0.model.100x100.json"
+            },
+            "effects": [],
+            "fill": 100,
+            "opacity": 70
+          },
+          {
+            "name": "Rec2.Rec2.fx.linear_dodge_2",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Rec2.Rec2.fx.linear_dodge_2.png",
+            "blend_mode": "linear_dodge"
+          },
+          {
+            "name": "Rec2.Rec2.fx.screen_1",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Rec2.Rec2.fx.screen_1.png",
+            "blend_mode": "screen"
+          },
+          {
+            "name": "Rec2.Rec2.fx.multiply_0",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Rec2.Rec2.fx.multiply_0.png",
+            "blend_mode": "multiply"
+          },
+          {
+            "name": "Rec2.Rec2.Rec2",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Rec2.Rec2.Rec2.png"
+          }
+        ],
+        "size": {
+          "width": 1000,
+          "height": 1000
+        }
+      },
+      {
+        "name": "Rec1_Rec2",
+        "side": "front",
+        "type": "warp-new-standard-v2",
+        "parts": [
+          {
+            "name": "Rec1_Rec2.BG",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Rec1_Rec2.BG.png"
+          },
+          {
+            "name": "Rec1_Rec2.Rec1_Rec2.Rec2.fx.linear_dodge_2",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Rec1_Rec2.Rec1_Rec2.Rec2.fx.linear_dodge_2.png",
+            "blend_mode": "linear_dodge"
+          },
+          {
+            "name": "Rec1_Rec2.Rec1_Rec2.Rec2.fx.screen_1",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Rec1_Rec2.Rec1_Rec2.Rec2.fx.screen_1.png",
+            "blend_mode": "screen"
+          },
+          {
+            "name": "Rec1_Rec2.Rec1_Rec2.Rec2.fx.multiply_0",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Rec1_Rec2.Rec1_Rec2.Rec2.fx.multiply_0.png",
+            "blend_mode": "multiply"
+          },
+          {
+            "name": "Rec1_Rec2.Rec1_Rec2.Rec2.Design.Design_0",
+            "side": "front",
+            "mask_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Rec1_Rec2.Rec1_Rec2.Rec2.Design.Design_0.png",
+            "warp_type": "warp_npy",
+            "warp_info": {
+              "model": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/model/Rec1_Rec2.Rec1_Rec2.Rec2.Design.Design_0.model.npy",
+              "artwork_width": 3000,
+              "artwork_height": 3000,
+              "model_json": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/695f5b1d7fc771a4908ec810/model/Rec1_Rec2.Rec1_Rec2.Rec2.Design.Design_0.model.100x100.json"
+            },
+            "effects": [],
+            "fill": 100,
+            "opacity": 70
+          },
+          {
+            "name": "Rec1_Rec2.Rec1_Rec2.Rec2.Rec2",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Rec1_Rec2.Rec1_Rec2.Rec2.Rec2.png"
+          },
+          {
+            "name": "Rec1_Rec2.Rec1_Rec2.Rec1.Design.Design_0",
+            "side": "front",
+            "mask_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Rec1_Rec2.Rec1_Rec2.Rec1.Design.Design_0.png",
+            "warp_type": "warp_npy",
+            "warp_info": {
+              "model": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/model/Rec1_Rec2.Rec1_Rec2.Rec1.Design.Design_0.model.npy",
+              "artwork_width": 3000,
+              "artwork_height": 3000,
+              "model_json": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/695f5b1d7fc771a4908ec810/model/Rec1_Rec2.Rec1_Rec2.Rec1.Design.Design_0.model.100x100.json"
+            },
+            "effects": [],
+            "fill": 100,
+            "opacity": 70
+          },
+          {
+            "name": "Rec1_Rec2.Rec1_Rec2.Rec1.fx.linear_dodge_2",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Rec1_Rec2.Rec1_Rec2.Rec1.fx.linear_dodge_2.png",
+            "blend_mode": "linear_dodge"
+          },
+          {
+            "name": "Rec1_Rec2.Rec1_Rec2.Rec1.fx.screen_1",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Rec1_Rec2.Rec1_Rec2.Rec1.fx.screen_1.png",
+            "blend_mode": "screen"
+          },
+          {
+            "name": "Rec1_Rec2.Rec1_Rec2.Rec1.fx.multiply_0",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Rec1_Rec2.Rec1_Rec2.Rec1.fx.multiply_0.png",
+            "blend_mode": "multiply"
+          },
+          {
+            "name": "Rec1_Rec2.Rec1_Rec2.Rec1.Rec1",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Rec1_Rec2.Rec1_Rec2.Rec1.Rec1.png"
+          }
+        ],
+        "size": {
+          "width": 1000,
+          "height": 1000
+        }
+      },
+      {
+        "name": "front4_back4",
+        "side": "front",
+        "type": "warp-new-standard-v2",
+        "parts": [
+          {
+            "name": "front4_back4.BG",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/front4_back4.BG.png"
+          },
+          {
+            "name": "front4_back4.front4_back4.back4.fx.linear_dodge_2",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/front4_back4.front4_back4.back4.fx.linear_dodge_2.png",
+            "blend_mode": "linear_dodge"
+          },
+          {
+            "name": "front4_back4.front4_back4.back4.fx.screen_1",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/front4_back4.front4_back4.back4.fx.screen_1.png",
+            "blend_mode": "screen"
+          },
+          {
+            "name": "front4_back4.front4_back4.back4.fx.multiply_0",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/front4_back4.front4_back4.back4.fx.multiply_0.png",
+            "blend_mode": "multiply"
+          },
+          {
+            "name": "front4_back4.front4_back4.back4.Design.Design_0",
+            "side": "front",
+            "mask_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/front4_back4.front4_back4.back4.Design.Design_0.png",
+            "warp_type": "warp_npy",
+            "warp_info": {
+              "model": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/model/front4_back4.front4_back4.back4.Design.Design_0.model.npy",
+              "artwork_width": 3000,
+              "artwork_height": 3000,
+              "model_json": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/695f5b1d7fc771a4908ec810/model/front4_back4.front4_back4.back4.Design.Design_0.model.100x100.json"
+            },
+            "effects": [],
+            "fill": 100,
+            "opacity": 70
+          },
+          {
+            "name": "front4_back4.front4_back4.back4.back",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/front4_back4.front4_back4.back4.back.png"
+          },
+          {
+            "name": "front4_back4.front4_back4.front4.Design.Design_0",
+            "side": "front",
+            "mask_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/front4_back4.front4_back4.front4.Design.Design_0.png",
+            "warp_type": "warp_npy",
+            "warp_info": {
+              "model": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/model/front4_back4.front4_back4.front4.Design.Design_0.model.npy",
+              "artwork_width": 3000,
+              "artwork_height": 3000,
+              "model_json": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/695f5b1d7fc771a4908ec810/model/front4_back4.front4_back4.front4.Design.Design_0.model.100x100.json"
+            },
+            "effects": [],
+            "fill": 100,
+            "opacity": 70
+          },
+          {
+            "name": "front4_back4.front4_back4.front4.fx.linear_dodge_2",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/front4_back4.front4_back4.front4.fx.linear_dodge_2.png",
+            "blend_mode": "linear_dodge"
+          },
+          {
+            "name": "front4_back4.front4_back4.front4.fx.screen_1",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/front4_back4.front4_back4.front4.fx.screen_1.png",
+            "blend_mode": "screen"
+          },
+          {
+            "name": "front4_back4.front4_back4.front4.fx.multiply_0",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/front4_back4.front4_back4.front4.fx.multiply_0.png",
+            "blend_mode": "multiply"
+          },
+          {
+            "name": "front4_back4.front4_back4.front4.front",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/front4_back4.front4_back4.front4.front.png"
+          }
+        ],
+        "size": {
+          "width": 1000,
+          "height": 1000
+        }
+      },
+      {
+        "name": "front0_back0",
+        "side": "front",
+        "type": "warp-new-standard-v2",
+        "parts": [
+          {
+            "name": "front0_back0.BG",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/front0_back0.BG.png"
+          },
+          {
+            "name": "front0_back0.front0_back0.back0.fx.linear_dodge_2",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/front0_back0.front0_back0.back0.fx.linear_dodge_2.png",
+            "blend_mode": "linear_dodge"
+          },
+          {
+            "name": "front0_back0.front0_back0.back0.fx.screen_1",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/front0_back0.front0_back0.back0.fx.screen_1.png",
+            "blend_mode": "screen"
+          },
+          {
+            "name": "front0_back0.front0_back0.back0.fx.multiply_0",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/front0_back0.front0_back0.back0.fx.multiply_0.png",
+            "blend_mode": "multiply"
+          },
+          {
+            "name": "front0_back0.front0_back0.back0.Design.Design_0",
+            "side": "front",
+            "mask_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/front0_back0.front0_back0.back0.Design.Design_0.png",
+            "warp_type": "warp_npy",
+            "warp_info": {
+              "model": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/model/front0_back0.front0_back0.back0.Design.Design_0.model.npy",
+              "artwork_width": 3000,
+              "artwork_height": 3000,
+              "model_json": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/695f5b1d7fc771a4908ec810/model/front0_back0.front0_back0.back0.Design.Design_0.model.100x100.json"
+            },
+            "effects": [],
+            "fill": 100,
+            "opacity": 70
+          },
+          {
+            "name": "front0_back0.front0_back0.back0.back",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/front0_back0.front0_back0.back0.back.png"
+          },
+          {
+            "name": "front0_back0.front0_back0.front0.Design.Design_0",
+            "side": "front",
+            "mask_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/front0_back0.front0_back0.front0.Design.Design_0.png",
+            "warp_type": "warp_npy",
+            "warp_info": {
+              "model": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/model/front0_back0.front0_back0.front0.Design.Design_0.model.npy",
+              "artwork_width": 3000,
+              "artwork_height": 3000,
+              "model_json": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/695f5b1d7fc771a4908ec810/model/front0_back0.front0_back0.front0.Design.Design_0.model.100x100.json"
+            },
+            "effects": [],
+            "fill": 100,
+            "opacity": 70
+          },
+          {
+            "name": "front0_back0.front0_back0.front0.fx.linear_dodge_2",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/front0_back0.front0_back0.front0.fx.linear_dodge_2.png",
+            "blend_mode": "linear_dodge"
+          },
+          {
+            "name": "front0_back0.front0_back0.front0.fx.screen_1",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/front0_back0.front0_back0.front0.fx.screen_1.png",
+            "blend_mode": "screen"
+          },
+          {
+            "name": "front0_back0.front0_back0.front0.fx.multiply_0",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/front0_back0.front0_back0.front0.fx.multiply_0.png",
+            "blend_mode": "multiply"
+          },
+          {
+            "name": "front0_back0.front0_back0.front0.front",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/front0_back0.front0_back0.front0.front.png"
+          }
+        ],
+        "size": {
+          "width": 1000,
+          "height": 1000
+        }
+      },
+      {
+        "name": "Square1",
+        "side": "front",
+        "type": "warp-new-standard-v2",
+        "parts": [
+          {
+            "name": "Square1.BG",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Square1.BG.png"
+          },
+          {
+            "name": "Square1.Square1.Design.Design_0",
+            "side": "front",
+            "mask_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Square1.Square1.Design.Design_0.png",
+            "warp_type": "warp_npy",
+            "warp_info": {
+              "model": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/model/Square1.Square1.Design.Design_0.model.npy",
+              "artwork_width": 3000,
+              "artwork_height": 3000,
+              "model_json": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/695f5b1d7fc771a4908ec810/model/Square1.Square1.Design.Design_0.model.100x100.json"
+            },
+            "effects": [],
+            "fill": 100,
+            "opacity": 70
+          },
+          {
+            "name": "Square1.Square1.fx.linear_dodge_2",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Square1.Square1.fx.linear_dodge_2.png",
+            "blend_mode": "linear_dodge"
+          },
+          {
+            "name": "Square1.Square1.fx.screen_1",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Square1.Square1.fx.screen_1.png",
+            "blend_mode": "screen"
+          },
+          {
+            "name": "Square1.Square1.fx.multiply_0",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Square1.Square1.fx.multiply_0.png",
+            "blend_mode": "multiply"
+          },
+          {
+            "name": "Square1.Square1.Square1",
+            "image_path": "https://platform126-staging.s3.us-west-1.amazonaws.com/product-mockups/695f5b1d7fc771a4908ec810/image-mask/Square1.Square1.Square1.png"
+          }
+        ],
+        "size": {
+          "width": 1000,
+          "height": 1000
+        }
+      }
+    ],
+    "consistency_name": "stained-glass-suncatcher-for-window-hanging",
+    "artwork_side_info": "artwork-per-side",
+    "prefix_name": "stained-glass-suncatcher-for-window-hanging",
+    "version": "v2",
+    "use_origin_artwork": true,
+    "shape_size": [
+      3000,
+      3000
+    ],
+    "use_client_mockup": true
+  }

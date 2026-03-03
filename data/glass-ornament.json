@@ -1,0 +1,70 @@
+{
+    "mockup_infos": [
+        {
+            "name": "Heart",
+            "side": "front",
+            "type": "warp-new-standard-v2",
+            "parts": [
+                {
+                    "name": "Heart.Bg",
+                    "image_path": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/69a156b165974644d0ad5437/image-mask/Heart.BG.png"
+                },
+                {
+                    "name": "Heart.Heart.Heart",
+                    "image_path": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/69a156b165974644d0ad5437/image-mask/Heart.Heart.Heart.png"
+                },
+                {
+                    "name": "Heart.Heart.Design.Design_1",
+                    "side": "front",
+                    "mask_path": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/69a156b165974644d0ad5437/image-mask/Heart.Heart.Design.Design_1.png",
+                    "warp_type": "warp_npy",
+                    "warp_info": {
+                        "model": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/69a156b165974644d0ad5437/model/Heart.Heart.Design.Design_1.model.npy",
+                        "artwork_width": 3000,
+                        "artwork_height": 3000,
+                        "model_json": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/69a156b165974644d0ad5437/model/Heart.Heart.Design.Design_1.model.100x100.json"
+                    },
+                    "effects": [],
+                    "fill": 100,
+                    "opacity": 100
+                },
+                {
+                    "name": "Heart.Heart.Design.Design_0",
+                    "side": "front",
+                    "mask_path": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/69a156b165974644d0ad5437/image-mask/Heart.Heart.Design.Design_0.png",
+                    "warp_type": "warp_npy",
+                    "warp_info": {
+                        "model": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/69a156b165974644d0ad5437/model/Heart.Heart.Design.Design_0.model.npy",
+                        "artwork_width": 3000,
+                        "artwork_height": 3000,
+                        "model_json": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/69a156b165974644d0ad5437/model/Heart.Heart.Design.Design_0.model.100x100.json"
+                    },
+                    "effects": [],
+                    "fill": 100,
+                    "opacity": 100
+                },
+                {
+                    "name": "Heart.Heart.fx.pin_light_1",
+                    "image_path": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/69a156b165974644d0ad5437/image-mask/Heart.Heart.fx.pin_light_1.png",
+                    "blend_mode": "pin_light"
+                },
+                {
+                    "name": "Heart.Heart.fx.normal_0",
+                    "image_path": "https://d16wh0ai3tx0d7.cloudfront.net/product-mockups/69a156b165974644d0ad5437/image-mask/Heart.Heart.fx.normal_0.png",
+                    "blend_mode": "normal"
+                }
+            ],
+            "size": {
+                "width": 1000,
+                "height": 1000
+            }
+        }
+    ],
+    "consistency_name": "glass-ornament---heart",
+    "artwork_side_info": "artwork-per-side",
+    "prefix_name": "glass-ornament---heart",
+    "version": "v2",
+    "use_origin_artwork": true,
+    "shape_size": [3000, 3000],
+    "use_client_mockup": true
+}

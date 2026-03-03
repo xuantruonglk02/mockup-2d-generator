@@ -1,5 +1,7 @@
 const data = {
     // test
+    'AI Bomber': 'ai-bomber',
+    'Glass Ornament': 'glass-ornament',
     'Stained Glass Suncatcher for Window Hanging': 'sgswvn',
 
     // part 2

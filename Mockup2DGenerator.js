@@ -36,6 +36,7 @@ class Mockup2DGenerator {
         this.bufferCache = new Map()
         this.warpDataCache = new Map()
         this.maskTextureCache = new Map()
+        this.resizedArtworkCache = new Map()
 
         // Pre-allocated buffers
         this.sharedPositionBuffer = null
@@ -118,6 +119,64 @@ class Mockup2DGenerator {
 
         gl.useProgram(program)
 
+        const pinLightFS = `
+            precision mediump float;
+            varying vec2 v_texCoord;
+            varying vec2 v_maskCoord;
+            uniform sampler2D u_texture;    // blend layer
+            uniform sampler2D u_mask;
+            uniform sampler2D u_backdrop;   // current framebuffer
+            uniform bool u_useMask;
+            uniform float u_opacity;
+
+            void main() {
+                vec4 src = texture2D(u_texture, v_texCoord);
+                vec2 backdropCoord = vec2(v_maskCoord.x, 1.0 - v_maskCoord.y);
+                vec4 dst = texture2D(u_backdrop, backdropCoord);
+
+                // Pin Light per channel: 
+                //   if blend < 0.5 → min(base, 2*blend)
+                //   else            → max(base, 2*blend - 1)
+                vec3 pinLight;
+                pinLight.r = src.r < 0.5 ? min(dst.r, 2.0 * src.r) : max(dst.r, 2.0 * src.r - 1.0);
+                pinLight.g = src.g < 0.5 ? min(dst.g, 2.0 * src.g) : max(dst.g, 2.0 * src.g - 1.0);
+                pinLight.b = src.b < 0.5 ? min(dst.b, 2.0 * src.b) : max(dst.b, 2.0 * src.b - 1.0);
+
+                float alpha = src.a * u_opacity;
+                if (u_useMask) {
+                    vec4 mask = texture2D(u_mask, v_maskCoord);
+                    alpha *= mask.a;
+                }
+
+                // Lerp between base and pin-light result by alpha
+                vec3 result = mix(dst.rgb, pinLight, alpha);
+                float outAlpha = dst.a + alpha * (1.0 - dst.a);
+
+                // Premultiplied alpha output
+                gl_FragColor = vec4(result * outAlpha, outAlpha);
+            }
+        `
+
+        const pinLightFragShader = this._compileShader(gl, gl.FRAGMENT_SHADER, pinLightFS)
+        const pinLightProgram = gl.createProgram()
+        gl.attachShader(pinLightProgram, vertexShader) // reuse vertex shader
+        gl.attachShader(pinLightProgram, pinLightFragShader)
+        gl.linkProgram(pinLightProgram)
+        if (!gl.getProgramParameter(pinLightProgram, gl.LINK_STATUS)) {
+            throw new Error('Failed to create pin_light program: ' + gl.getProgramInfoLog(pinLightProgram))
+        }
+
+        this.pinLightProgram = pinLightProgram
+        this.pinLightLocations = {
+            aPosition: gl.getAttribLocation(pinLightProgram, 'a_position'),
+            aTexCoord: gl.getAttribLocation(pinLightProgram, 'a_texCoord'),
+            uTexture: gl.getUniformLocation(pinLightProgram, 'u_texture'),
+            uMask: gl.getUniformLocation(pinLightProgram, 'u_mask'),
+            uBackdrop: gl.getUniformLocation(pinLightProgram, 'u_backdrop'),
+            uUseMask: gl.getUniformLocation(pinLightProgram, 'u_useMask'),
+            uOpacity: gl.getUniformLocation(pinLightProgram, 'u_opacity'),
+        }
+
         gl.enable(gl.BLEND)
         gl.clearColor(0, 0, 0, 0)
 
@@ -166,6 +225,22 @@ class Mockup2DGenerator {
         this.sharedTexCoordBuffer = this.gl.createBuffer()
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.sharedTexCoordBuffer)
         this.gl.bufferData(this.gl.ARRAY_BUFFER, this.fullScreenQuadData.texCoords, this.gl.STATIC_DRAW)
+    }
+
+    _captureFramebufferAsTexture() {
+        const gl = this.gl
+        const w = this.renderCanvas.width
+        const h = this.renderCanvas.height
+
+        const texture = gl.createTexture()
+        gl.bindTexture(gl.TEXTURE_2D, texture)
+        gl.copyTexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 0, 0, w, h, 0)
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR)
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR)
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
+
+        return texture
     }
 
     /**
@@ -226,23 +301,20 @@ class Mockup2DGenerator {
 
         /** @type {MockupLayer[]} */
         const mockupInfos = this.mockupInfos || []
-        const canvasSize = [this.renderCanvas.width, this.renderCanvas.height]
 
-        const artwork = await this._resizeArtworkCanvas(design, canvasSize)
+        // Clear resized artwork cache at the start of each render pass
+        this.resizedArtworkCache.clear()
 
         const mockups = []
         for (const mockupInfo of mockupInfos) {
             this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT)
-            await this._renderMockupInfo(mockupInfo, artwork, color, heatherPath, useBackground)
+            await this._renderMockupInfo(mockupInfo, design, color, heatherPath, useBackground)
             const mockupBlobURL = await this.exportAsBlobURL()
             mockups.push(mockupBlobURL)
         }
 
-        const ctx = artwork.getContext('2d')
-        ctx?.clearRect(0, 0, artwork.width, artwork.height)
-
         console.debug(`[Mockup2DGenerator] render | ${Date.now() - startTs} ms`)
-        
+
         return mockups
     }
 
@@ -252,13 +324,13 @@ class Mockup2DGenerator {
 
         const heatherMapping = mockupInfo.heather_mapping || {}
 
+        const startTs = Date.now()
+        const mockupName = mockupInfo.name
+
         // Then render other layers in order
         for (const layer of layers) {
-            let startTs = Date.now()
-
             try {
                 if (!useBackground && layer.name === `${mockupInfo.name}.BG`) continue
-
                 if (layer.color_mask_path && layer.is_color_image) {
                     await this.glFillColor(layer, color)
 
@@ -279,9 +351,9 @@ class Mockup2DGenerator {
             } catch (error) {
                 console.error('[Mockup2DGenerator] Error during rendering:', error)
             }
-
-            // console.debug(`[Mockup2DGenerator] _renderMockupInfo ${mockupInfo.name} "${layer.name}" | ${Date.now() - startTs} ms`)
         }
+
+        console.debug(`[_renderMockupInfo] render "${mockupName}" | ${Date.now() - startTs} ms`)
     }
 
     /**
@@ -290,7 +362,6 @@ class Mockup2DGenerator {
      */
     async glDrawImageLayer(layer) {
         const blendMode = layer.blend_mode || 'normal'
-        this._glSetBlendMode(blendMode)
 
         const canvasSize = [this.renderCanvas.width, this.renderCanvas.height]
 
@@ -316,6 +387,12 @@ class Mockup2DGenerator {
             this.textureCache.set(imagePath, texture)
         }
 
+        if (blendMode === 'pin_light') {
+            this._renderPinLight(texture, null, 1.0)
+            return
+        }
+
+        this._glSetBlendMode(blendMode)
         this._setupFullScreenQuad()
 
         // Set texture uniform
@@ -423,11 +500,11 @@ class Mockup2DGenerator {
     /**
      *
      * @param {MockupDesignLayer} layer
-     * @param {Image} artwork
+     * @param {HTMLCanvasElement} artwork
      */
     async glWarpAndDrawDesign(layer, artwork) {
         const { mask_path, warp_info, opacity } = layer
-        const { model_json } = warp_info
+        const { model_json, artwork_width, artwork_height } = warp_info
 
         const canvasSize = [this.renderCanvas.width, this.renderCanvas.height]
 
@@ -455,8 +532,15 @@ class Mockup2DGenerator {
 
         this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, warpBuffers.indexBuffer)
 
-        // Create design texture
-        const designTexture = this._createTexture(artwork)
+        // Create high-res design texture with caching
+        const artworkCacheKey = `${artwork_width}x${artwork_height}`
+        let highResArtwork = this.resizedArtworkCache.get(artworkCacheKey)
+        if (!highResArtwork) {
+            highResArtwork = await this._resizeArtworkCanvas(artwork, [artwork_width, artwork_height])
+            this.resizedArtworkCache.set(artworkCacheKey, highResArtwork)
+        }
+        
+        const designTexture = this._createTexture(highResArtwork)
 
         // Get or create mask texture from cache
         let maskTexture = this.maskTextureCache.get(mask_path)
@@ -481,6 +565,66 @@ class Mockup2DGenerator {
         this.gl.drawElements(this.gl.TRIANGLES, warpBuffers.indexCount, this.gl.UNSIGNED_SHORT, 0)
 
         this.gl.deleteTexture(designTexture)
+    }
+
+    /**
+     * Render a layer using Pin Light blend mode
+     * @param {WebGLTexture} srcTexture - The layer texture to blend
+     * @param {WebGLTexture|null} maskTexture - Optional mask
+     * @param {number} opacity - 0..1
+     */
+    _renderPinLight(srcTexture, maskTexture, opacity = 1.0) {
+        const gl = this.gl
+
+        // 1) Capture current framebuffer as backdrop
+        const backdropTexture = this._captureFramebufferAsTexture()
+
+        // 2) Switch to pin_light program
+        gl.useProgram(this.pinLightProgram)
+
+        // 3) Setup quad with pinLight locations
+        this._setupFullScreenQuadForProgram(this.pinLightLocations)
+
+        // 4) Disable GL blending — shader does the compositing
+        gl.disable(gl.BLEND)
+
+        // 5) Bind uniforms
+        gl.uniform1i(this.pinLightLocations.uTexture, 0)
+        gl.uniform1i(this.pinLightLocations.uBackdrop, 1)
+        gl.uniform1i(this.pinLightLocations.uMask, 2)
+        gl.uniform1i(this.pinLightLocations.uUseMask, maskTexture ? 1 : 0)
+        gl.uniform1f(this.pinLightLocations.uOpacity, opacity)
+
+        gl.activeTexture(gl.TEXTURE0)
+        gl.bindTexture(gl.TEXTURE_2D, srcTexture)
+        gl.activeTexture(gl.TEXTURE1)
+        gl.bindTexture(gl.TEXTURE_2D, backdropTexture)
+        if (maskTexture) {
+            gl.activeTexture(gl.TEXTURE2)
+            gl.bindTexture(gl.TEXTURE_2D, maskTexture)
+        }
+
+        // 6) Draw
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
+
+        // 7) Cleanup: restore main program & blending
+        gl.deleteTexture(backdropTexture)
+        gl.enable(gl.BLEND)
+        gl.useProgram(this.program)
+    }
+
+    _setupFullScreenQuadForProgram(locations) {
+        const bufferCacheKey = 'fullscreen_quad'
+        const buffers = this.bufferCache.get(bufferCacheKey)
+        if (!buffers) return this._setupFullScreenQuad() // fallback
+
+        this.gl.enableVertexAttribArray(locations.aPosition)
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buffers.positionBuffer)
+        this.gl.vertexAttribPointer(locations.aPosition, 2, this.gl.FLOAT, false, 0, 0)
+
+        this.gl.enableVertexAttribArray(locations.aTexCoord)
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, buffers.texCoordBuffer)
+        this.gl.vertexAttribPointer(locations.aTexCoord, 2, this.gl.FLOAT, false, 0, 0)
     }
 
     _createWarpBuffers(uvData) {
@@ -635,6 +779,7 @@ class Mockup2DGenerator {
         // Clear other caches
         this.imageCache.clear()
         this.warpDataCache.clear()
+        this.resizedArtworkCache.clear()
     }
 
     destroy() {
@@ -651,6 +796,9 @@ class Mockup2DGenerator {
         // Delete program
         if (this.program) {
             this.gl.deleteProgram(this.program)
+        }
+        if (this.pinLightProgram) {
+            this.gl.deleteProgram(this.pinLightProgram)
         }
 
         // Lose WebGL context
@@ -783,6 +931,9 @@ class Mockup2DGenerator {
         } else if (mode === 'lighten') {
             this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE)
             this.gl.blendEquation(this.gl.MAX)
+        } else if (mode === 'pin_light') {
+            // Handled separately via _renderPinLight — set normal as fallback
+            this.gl.blendFunc(this.gl.ONE, this.gl.ONE_MINUS_SRC_ALPHA)
         } else {
             throw new Error('Unsupported blend mode: ' + mode)
         }

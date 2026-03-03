@@ -1,0 +1,159 @@
+{
+    "mockup_infos": [
+        {
+            "name": "Front",
+            "side": "front",
+            "type": "ai_warp_generate",
+            "parts": [
+                {
+                    "name": "Front.BG",
+                    "image_path": "mockup_data/bomber/BG.png"
+                },
+                {
+                    "name": "Front.Front.Front",
+                    "image_path": "mockup_data/bomber/front.png"
+                },
+                {
+                    "name": "Front.Front.Design.Front_4",
+                    "side": "front",
+                    "mask_path": "mockup_data/bomber/mask_model/front_torso.png",
+                    "warp_type": "warp_npy",
+                    "warp_info": {
+                        "model": "bomber\\uv_models\\front_torso.model.npy",
+                        "artwork_width": 3000,
+                        "artwork_height": 3000,
+                        "model_json": "bomber\\uv_models\\front_torso.model.100x100.json"
+                    },
+                    "effects": [],
+                    "fill": 100,
+                    "opacity": 100
+                },
+                {
+                    "name": "Front.Front.Design.Left Sleeve_3",
+                    "side": "front",
+                    "mask_path": "mockup_data/bomber/mask_model/front_left_sleeve.png",
+                    "warp_type": "warp_npy",
+                    "warp_info": {
+                        "model": "bomber\\uv_models\\front_left_sleeve.model.npy",
+                        "artwork_width": 3000,
+                        "artwork_height": 3000,
+                        "model_json": "bomber\\uv_models\\front_left_sleeve.model.100x100.json"
+                    },
+                    "effects": [],
+                    "fill": 100,
+                    "opacity": 100
+                },
+                {
+                    "name": "Front.Front.Design.Right Sleeve_2",
+                    "side": "front",
+                    "mask_path": "mockup_data/bomber/mask_model/front_right_sleeve.png",
+                    "warp_type": "warp_npy",
+                    "warp_info": {
+                        "model": "bomber\\uv_models\\front_right_sleeve.model.npy",
+                        "artwork_width": 3000,
+                        "artwork_height": 3000,
+                        "model_json": "bomber\\uv_models\\front_right_sleeve.model.100x100.json"
+                    },
+                    "effects": [],
+                    "fill": 100,
+                    "opacity": 100
+                },
+                {
+                    "name": "Front.Front.fx.shading",
+                    "image_path": "mockup_data/bomber/texture_relight/front_shading.png",
+                    "blend_mode": "multiply"
+                },
+                {
+                    "name": "Front.Front.fx.texture",
+                    "image_path": "mockup_data/bomber/texture_relight/front_texture.png",
+                    "blend_mode": "linear_dodge"
+                }
+            ],
+            "size": {
+                "width": 1000,
+                "height": 1000
+            }
+        },
+        {
+            "name": "Back",
+            "side": "front",
+            "type": "ai_warp_generate",
+            "parts": [
+                {
+                    "name": "Back.BG",
+                    "image_path": "mockup_data/bomber/BG.png"
+                },
+                {
+                    "name": "Back.Back.Back",
+                    "image_path": "mockup_data/bomber/back.png"
+                },
+                {
+                    "name": "Back.Back.Design.Back_2",
+                    "side": "front",
+                    "mask_path": "mockup_data/bomber/mask_model/back_torso.png",
+                    "warp_type": "warp_npy",
+                    "warp_info": {
+                        "model": "bomber\\uv_models\\back_torso.model.npy",
+                        "artwork_width": 3000,
+                        "artwork_height": 3000,
+                        "model_json": ""
+                    },
+                    "effects": [],
+                    "fill": 100,
+                    "opacity": 100
+                },
+                {
+                    "name": "Back.Back.Design.Right Sleeve_1",
+                    "side": "front",
+                    "mask_path": "mockup_data/bomber/mask_model/back_right_sleeve.png",
+                    "warp_type": "warp_npy",
+                    "warp_info": {
+                        "model": "bomber\\uv_models\\back_right_sleeve.model.npy",
+                        "artwork_width": 3000,
+                        "artwork_height": 3000,
+                        "model_json": ""
+                    },
+                    "effects": [],
+                    "fill": 100,
+                    "opacity": 100
+                },
+                {
+                    "name": "Back.Back.Design.Left Sleeve_0",
+                    "side": "front",
+                    "mask_path": "mockup_data/bomber/mask_model/back_left_sleeve.png",
+                    "warp_type": "warp_npy",
+                    "warp_info": {
+                        "model": "bomber\\uv_models\\back_left_sleeve.model.npy",
+                        "artwork_width": 3000,
+                        "artwork_height": 3000,
+                        "model_json": "bomber\\uv_models\\back_left_sleeve.model.100x100.json"
+                    },
+                    "effects": [],
+                    "fill": 100,
+                    "opacity": 100
+                },
+                {
+                    "name": "Back.Back.fx.shading",
+                    "image_path": "mockup_data/bomber/texture_relight/back_shading.png",
+                    "blend_mode": "multiply"
+                },
+                {
+                    "name": "Back.Back.fx.texture",
+                    "image_path": "mockup_data/bomber/texture_relight/back_texture.png",
+                    "blend_mode": "linear_dodge"
+                }
+            ],
+            "size": {
+                "width": 1000,
+                "height": 1000
+            }
+        }
+    ],
+    "consistency_name": "glass-ornament---heart",
+    "artwork_side_info": "artwork-per-side",
+    "prefix_name": "glass-ornament---heart",
+    "version": "v2",
+    "use_origin_artwork": true,
+    "shape_size": [3000, 3000],
+    "use_client_mockup": true
+}

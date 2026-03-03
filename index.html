@@ -18,6 +18,7 @@
         ></script>
 
         <script src="./mockupInfos.js"></script>
+        <script src="./artworkInfos.js"></script>
         <script src="./Mockup2DGenerator.js"></script>
 
         <style>
@@ -114,9 +115,15 @@
                     </div>
 
                     <!-- Mockup Selection -->
-                    <div class="section mb-4">
+                    <div class="section mb-2">
                         <label for="mockup_select" class="form-label">Select Mockup</label>
                         <select id="mockup_select" class="form-select"></select>
+                    </div>
+
+                    <!-- Artwork Selection -->
+                    <div class="section mb-4">
+                        <label for="artwork_select" class="form-label">Select Artwork</label>
+                        <select id="artwork_select" class="form-select"></select>
                     </div>
                     
                     <!-- Artwork Upload Section -->
@@ -196,6 +203,7 @@
             let loadingEl = null
             let errorEl = null
             let mockupSelect = null
+            let artworkSelect = null
             let colorInput = null
             let colorCodeInput = null
             let uploadArea = null
@@ -216,7 +224,7 @@
             let mockupInfos = null
             let selectedMockupId = null
             let availableMockups = []
-            let artworkUrl = './artwork.png'
+            let artworkUrl = './artworks/transparent.png'
             let color = '#ffffff'
             let artwork = null
             let applyHeather = false
@@ -251,6 +259,29 @@
                     selectedMockupId = defaultMockup
                     await loadMockupInfosToGenerator(defaultMockup)
                 }
+            }
+
+            const loadAvailableArtworks = async () => {
+                const artworks = getAvailableArtworks()
+                
+                // Clear existing options
+                artworkSelect.innerHTML = ''
+                
+                if (artworks.length === 0) {
+                    artworkSelect.innerHTML = '<option value="">No artworks available</option>'
+                    return
+                }
+
+                // Add available artworks
+                artworks.forEach(art => {
+                    const option = document.createElement('option')
+                    option.value = art.url
+                    option.textContent = art.name
+                    artworkSelect.appendChild(option)
+                })
+
+                // Set default matching the initial artworkUrl
+                artworkSelect.value = artworkUrl
             }
 
             const loadMockupInfosToGenerator = async (mockupId) => {
@@ -337,6 +368,9 @@
                     // Load artwork for mockup generation
                     artwork = await mockup2DGenerator._loadImage(previewUrl, null, true)
                     
+                    // Reset artwork select to reflect manual upload
+                    artworkSelect.value = ""
+
                     // Auto-render if not already rendering
                     if (!isRendering) {
                         await render()
@@ -443,6 +477,7 @@
                 loadingEl = document.getElementById('loading')
                 errorEl = document.getElementById('error')
                 mockupSelect = document.getElementById('mockup_select')
+                artworkSelect = document.getElementById('artwork_select')
 
                 colorInput = document.getElementById('color')
                 colorCodeInput = document.getElementById('color_code')
@@ -480,7 +515,36 @@
                         await render()
                     }
                 })
+                // Artwork selection change handler
+                artworkSelect.addEventListener('change', async (e) => {
+                    if (isRendering) return
+                    
+                    const newArtworkUrl = e.target.value
+                    if (!newArtworkUrl) return
 
+                    artworkUrl = newArtworkUrl
+                    
+                    try {
+                        const mockup2DGenerator = getMockup2DGeneratorInstance()
+                        if (!mockup2DGenerator) return
+
+                        // Load new artwork
+                        artwork = await mockup2DGenerator._loadImage(artworkUrl, null, true)
+                        
+                        // Hide preview and show upload area (reset manual upload state)
+                        artworkPreviewContainer.style.display = 'none'
+                        uploadArea.style.display = 'block'
+                        artworkInput.value = ''
+
+                        if (!isRendering) {
+                            await render()
+                        }
+                    } catch (error) {
+                        console.error('Failed to load selected artwork:', error)
+                        errorEl.style.display = 'block'
+                        errorEl.textContent = `Error loading artwork: ${error.message}`
+                    }
+                })
                 // Color change handlers
                 colorInput.addEventListener('change', (e) => {
                     if (isRendering) return
@@ -560,6 +624,7 @@
 
                 // Load available mockups first
                 await loadAvailableMockups()
+                await loadAvailableArtworks()
                 
                 try {
                     const mockup2DGenerator = getMockup2DGeneratorInstance()

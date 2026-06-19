@@ -1,8 +1,5 @@
 const data = {
-    // test
-    'AI Bomber': 'ai-bomber',
-    'Glass Ornament': 'glass-ornament',
-    'Stained Glass Suncatcher for Window Hanging': 'sgswvn',
+    'Youth Hoodie Gildan 18500B (Made in US)': '18500bus',
 
     // part 2
     'Youth Jersey Tee Bella Canvas 3001Y (Made in US)': '3001yus',

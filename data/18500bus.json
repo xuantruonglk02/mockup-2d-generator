@@ -1,0 +1,348 @@
+{
+  "mockup_infos": [
+    {
+      "name": "Front",
+      "side": "front",
+      "type": "warp-new-standard-v2",
+      "parts": [
+        {
+          "name": "Front.BG",
+          "image_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/image-mask/Front.BG.png"
+        },
+        {
+          "name": "Front.Front.Front",
+          "image_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/image-mask/Front.Front.Front.png"
+        },
+        {
+          "name": "Front.Front.Colors.color_mask",
+          "image_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/Transparent.png",
+          "color_mask_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/color-mask/Front.Front.Colors.color_mask.png",
+          "is_color_image": true
+        },
+        {
+          "name": "Front.Front.Design.Front_2",
+          "side": "front",
+          "mask_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/image-mask/Front.Front.Design.Front_2.png",
+          "warp_type": "warp_npy",
+          "warp_info": {
+            "model": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/model/Front.Front.Design.Front_2.model.npy",
+            "artwork_width": 3000,
+            "artwork_height": 3000,
+            "model_json": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/model/Front.Front.Design.Front_2.model.100x100.json"
+          },
+          "effects": [],
+          "fill": 100,
+          "opacity": 100
+        },
+        {
+          "name": "Front.Front.Design.Sleeve Left_1",
+          "side": "front",
+          "mask_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/image-mask/Front.Front.Design.Sleeve%2520Left_1.png",
+          "warp_type": "warp_npy",
+          "warp_info": {
+            "model": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/model/Front.Front.Design.Sleeve%2BLeft_1.model.npy",
+            "artwork_width": 3000,
+            "artwork_height": 3000,
+            "model_json": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/model/Front.Front.Design.Sleeve_Left_1.model.100x100.json"
+          },
+          "effects": [],
+          "fill": 100,
+          "opacity": 100
+        },
+        {
+          "name": "Front.Front.Design.Sleeve Right_0",
+          "side": "front",
+          "mask_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/image-mask/Front.Front.Design.Sleeve%2520Right_0.png",
+          "warp_type": "warp_npy",
+          "warp_info": {
+            "model": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/model/Front.Front.Design.Sleeve%2BRight_0.model.npy",
+            "artwork_width": 3000,
+            "artwork_height": 3000,
+            "model_json": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/model/Front.Front.Design.Sleeve_Right_0.model.100x100.json"
+          },
+          "effects": [],
+          "fill": 100,
+          "opacity": 100
+        },
+        {
+          "name": "Front.Front.fx.linear_dodge_2",
+          "image_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/image-mask/Front.Front.fx.linear_dodge_2.png",
+          "blend_mode": "linear_dodge"
+        },
+        {
+          "name": "Front.Front.fx.screen_1",
+          "image_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/image-mask/Front.Front.fx.screen_1.png",
+          "blend_mode": "screen"
+        },
+        {
+          "name": "Front.Front.fx.multiply_0",
+          "image_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/image-mask/Front.Front.fx.multiply_0.png",
+          "blend_mode": "multiply"
+        }
+      ],
+      "size": {
+        "width": 1000,
+        "height": 1000
+      },
+      "heather_mapping": {
+        "heather_texture": "https://d3dw17cxg2wobs.cloudfront.net/mockups/platform126/public/assets/heather_texture.png"
+      }
+    },
+    {
+      "name": "Back",
+      "side": "front",
+      "type": "warp-new-standard-v2",
+      "parts": [
+        {
+          "name": "Back.BG",
+          "image_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/image-mask/Back.BG.png"
+        },
+        {
+          "name": "Back.Back.Back",
+          "image_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/image-mask/Back.Back.Back.png"
+        },
+        {
+          "name": "Back.Back.Colors.color_mask",
+          "image_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/Transparent.png",
+          "color_mask_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/color-mask/Back.Back.Colors.color_mask.png",
+          "is_color_image": true
+        },
+        {
+          "name": "Back.Back.Design.Back_2",
+          "side": "front",
+          "mask_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/image-mask/Back.Back.Design.Back_2.png",
+          "warp_type": "warp_npy",
+          "warp_info": {
+            "model": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/model/Back.Back.Design.Back_2.model.npy",
+            "artwork_width": 3000,
+            "artwork_height": 3000,
+            "model_json": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/model/Back.Back.Design.Back_2.model.100x100.json"
+          },
+          "effects": [],
+          "fill": 100,
+          "opacity": 100
+        },
+        {
+          "name": "Back.Back.Design.Sleeve Right_1",
+          "side": "front",
+          "mask_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/image-mask/Back.Back.Design.Sleeve%2520Right_1.png",
+          "warp_type": "warp_npy",
+          "warp_info": {
+            "model": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/model/Back.Back.Design.Sleeve%2BRight_1.model.npy",
+            "artwork_width": 3000,
+            "artwork_height": 3000,
+            "model_json": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/model/Back.Back.Design.Sleeve_Right_1.model.100x100.json"
+          },
+          "effects": [],
+          "fill": 100,
+          "opacity": 100
+        },
+        {
+          "name": "Back.Back.Design.Sleeve Left_0",
+          "side": "front",
+          "mask_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/image-mask/Back.Back.Design.Sleeve%2520Left_0.png",
+          "warp_type": "warp_npy",
+          "warp_info": {
+            "model": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/model/Back.Back.Design.Sleeve%2BLeft_0.model.npy",
+            "artwork_width": 3000,
+            "artwork_height": 3000,
+            "model_json": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/model/Back.Back.Design.Sleeve_Left_0.model.100x100.json"
+          },
+          "effects": [],
+          "fill": 100,
+          "opacity": 100
+        },
+        {
+          "name": "Back.Back.fx.linear_dodge_2",
+          "image_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/image-mask/Back.Back.fx.linear_dodge_2.png",
+          "blend_mode": "linear_dodge"
+        },
+        {
+          "name": "Back.Back.fx.screen_1",
+          "image_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/image-mask/Back.Back.fx.screen_1.png",
+          "blend_mode": "screen"
+        },
+        {
+          "name": "Back.Back.fx.multiply_0",
+          "image_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/image-mask/Back.Back.fx.multiply_0.png",
+          "blend_mode": "multiply"
+        }
+      ],
+      "size": {
+        "width": 1000,
+        "height": 1000
+      },
+      "heather_mapping": {
+        "heather_texture": "https://d3dw17cxg2wobs.cloudfront.net/mockups/platform126/public/assets/heather_texture.png"
+      }
+    },
+    {
+      "name": "Front_Back",
+      "side": "front",
+      "type": "warp-new-standard-v2",
+      "parts": [
+        {
+          "name": "Front_Back.BG",
+          "image_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/image-mask/Front_Back.BG.png"
+        },
+        {
+          "name": "Front_Back.Front_Back.Back.Back",
+          "image_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/image-mask/Front_Back.Front_Back.Back.Back.png"
+        },
+        {
+          "name": "Front_Back.Front_Back.Back.Colors.color_mask",
+          "image_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/Transparent.png",
+          "color_mask_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/color-mask/Front_Back.Front_Back.Back.Colors.color_mask.png",
+          "is_color_image": true
+        },
+        {
+          "name": "Front_Back.Front_Back.Back.Design.Back_2",
+          "side": "front",
+          "mask_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/image-mask/Front_Back.Front_Back.Back.Design.Back_2.png",
+          "warp_type": "warp_npy",
+          "warp_info": {
+            "model": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/model/Front_Back.Front_Back.Back.Design.Back_2.model.npy",
+            "artwork_width": 3000,
+            "artwork_height": 3000,
+            "model_json": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/model/Front_Back.Front_Back.Back.Design.Back_2.model.100x100.json"
+          },
+          "effects": [],
+          "fill": 100,
+          "opacity": 100
+        },
+        {
+          "name": "Front_Back.Front_Back.Back.Design.Sleeve Right_1",
+          "side": "front",
+          "mask_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/image-mask/Front_Back.Front_Back.Back.Design.Sleeve%2520Right_1.png",
+          "warp_type": "warp_npy",
+          "warp_info": {
+            "model": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/model/Front_Back.Front_Back.Back.Design.Sleeve%2BRight_1.model.npy",
+            "artwork_width": 3000,
+            "artwork_height": 3000,
+            "model_json": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/model/Front_Back.Front_Back.Back.Design.Sleeve_Right_1.model.100x100.json"
+          },
+          "effects": [],
+          "fill": 100,
+          "opacity": 100
+        },
+        {
+          "name": "Front_Back.Front_Back.Back.Design.Sleeve Left_0",
+          "side": "front",
+          "mask_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/image-mask/Front_Back.Front_Back.Back.Design.Sleeve%2520Left_0.png",
+          "warp_type": "warp_npy",
+          "warp_info": {
+            "model": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/model/Front_Back.Front_Back.Back.Design.Sleeve%2BLeft_0.model.npy",
+            "artwork_width": 3000,
+            "artwork_height": 3000,
+            "model_json": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/model/Front_Back.Front_Back.Back.Design.Sleeve_Left_0.model.100x100.json"
+          },
+          "effects": [],
+          "fill": 100,
+          "opacity": 100
+        },
+        {
+          "name": "Front_Back.Front_Back.Back.fx.linear_dodge_2",
+          "image_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/image-mask/Front_Back.Front_Back.Back.fx.linear_dodge_2.png",
+          "blend_mode": "linear_dodge"
+        },
+        {
+          "name": "Front_Back.Front_Back.Back.fx.screen_1",
+          "image_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/image-mask/Front_Back.Front_Back.Back.fx.screen_1.png",
+          "blend_mode": "screen"
+        },
+        {
+          "name": "Front_Back.Front_Back.Back.fx.multiply_0",
+          "image_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/image-mask/Front_Back.Front_Back.Back.fx.multiply_0.png",
+          "blend_mode": "multiply"
+        },
+        {
+          "name": "Front_Back.Front_Back.Front.Front",
+          "image_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/image-mask/Front_Back.Front_Back.Front.Front.png"
+        },
+        {
+          "name": "Front_Back.Front_Back.Front.Colors.color_mask",
+          "image_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/Transparent.png",
+          "color_mask_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/color-mask/Front_Back.Front_Back.Front.Colors.color_mask.png",
+          "is_color_image": true
+        },
+        {
+          "name": "Front_Back.Front_Back.Front.Design.Front_2",
+          "side": "front",
+          "mask_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/image-mask/Front_Back.Front_Back.Front.Design.Front_2.png",
+          "warp_type": "warp_npy",
+          "warp_info": {
+            "model": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/model/Front_Back.Front_Back.Front.Design.Front_2.model.npy",
+            "artwork_width": 3000,
+            "artwork_height": 3000,
+            "model_json": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/model/Front_Back.Front_Back.Front.Design.Front_2.model.100x100.json"
+          },
+          "effects": [],
+          "fill": 100,
+          "opacity": 100
+        },
+        {
+          "name": "Front_Back.Front_Back.Front.Design.Sleeve Left_1",
+          "side": "front",
+          "mask_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/image-mask/Front_Back.Front_Back.Front.Design.Sleeve%2520Left_1.png",
+          "warp_type": "warp_npy",
+          "warp_info": {
+            "model": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/model/Front_Back.Front_Back.Front.Design.Sleeve%2BLeft_1.model.npy",
+            "artwork_width": 3000,
+            "artwork_height": 3000,
+            "model_json": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/model/Front_Back.Front_Back.Front.Design.Sleeve_Left_1.model.100x100.json"
+          },
+          "effects": [],
+          "fill": 100,
+          "opacity": 100
+        },
+        {
+          "name": "Front_Back.Front_Back.Front.Design.Sleeve Right_0",
+          "side": "front",
+          "mask_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/image-mask/Front_Back.Front_Back.Front.Design.Sleeve%2520Right_0.png",
+          "warp_type": "warp_npy",
+          "warp_info": {
+            "model": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/model/Front_Back.Front_Back.Front.Design.Sleeve%2BRight_0.model.npy",
+            "artwork_width": 3000,
+            "artwork_height": 3000,
+            "model_json": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/model/Front_Back.Front_Back.Front.Design.Sleeve_Right_0.model.100x100.json"
+          },
+          "effects": [],
+          "fill": 100,
+          "opacity": 100
+        },
+        {
+          "name": "Front_Back.Front_Back.Front.fx.linear_dodge_2",
+          "image_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/image-mask/Front_Back.Front_Back.Front.fx.linear_dodge_2.png",
+          "blend_mode": "linear_dodge"
+        },
+        {
+          "name": "Front_Back.Front_Back.Front.fx.screen_1",
+          "image_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/image-mask/Front_Back.Front_Back.Front.fx.screen_1.png",
+          "blend_mode": "screen"
+        },
+        {
+          "name": "Front_Back.Front_Back.Front.fx.multiply_0",
+          "image_path": "https://d3dw17cxg2wobs.cloudfront.net/mockups/product-mockups/6a14fbe4b99229c7f83ec122/image-mask/Front_Back.Front_Back.Front.fx.multiply_0.png",
+          "blend_mode": "multiply"
+        }
+      ],
+      "size": {
+        "width": 1000,
+        "height": 1000
+      },
+      "heather_mapping": {
+        "heather_texture": "https://d3dw17cxg2wobs.cloudfront.net/mockups/platform126/public/assets/heather_texture.png"
+      }
+    }
+  ],
+  "consistency_name": "youth-hoodie-gildan-18500b-made-in-us",
+  "artwork_side_info": "artwork-per-side",
+  "prefix_name": "youth-hoodie-gildan-18500b-made-in-us",
+  "version": "v2",
+  "use_origin_artwork": true,
+  "shape_size": [
+    3000,
+    3000
+  ],
+  "use_client_mockup": true
+}

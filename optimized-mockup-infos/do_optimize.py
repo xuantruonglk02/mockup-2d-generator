@@ -1,4 +1,5 @@
 import json
+import re
 import numpy as np
 from PIL import Image
 import cv2
@@ -10,15 +11,18 @@ import aiohttp
 import copy
 import sys
 import time
+import threading
 import matplotlib.pyplot as plt
 import matplotlib
 matplotlib.use('Agg')  # Use non-interactive backend
+import psutil
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from warp_image.tps import numpy as tps
+from scipy.ndimage import distance_transform_edt, gaussian_filter
 
 
 ROOT_DIR = "/home/dev/code/test-color-mockup-2d"
-PREFIX = "optimized-mockup-infos/mockups/crop_top_baseball_jersey_without_piping"
+PREFIX = "optimized-mockup-infos/mockups/all_over_print_full_zip_up_hoodie_lightweight"
 
 
 def generate_local_path_from_url(url, prefix):
@@ -178,50 +182,64 @@ def process_model_parts(side_name, parts):
     }
 
 
-def remove_noise_pixels(mask_path, min_area=100):
-    """
-    Remove noise pixels outside the main mask contours.
-    
-    Args:
-        mask_path: path to the mask image
-        min_area: minimum contour area to keep (pixels smaller than this are removed)
-    
-    Returns:
-        cleaned mask as numpy array (boolean)
-    """
+def remove_noise_pixels(mask_path, min_area=100, close_kernel=3):
     mask_img = Image.open(mask_path).convert('RGBA')
     mask_array = np.array(mask_img)
     alpha_channel = mask_array[:, :, 3]
     
-    # Convert to binary mask
     binary_mask = (alpha_channel > 0).astype(np.uint8) * 255
     
-    # Find all contours
-    contours, _ = cv2.findContours(binary_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    # Morphological closing để lấp gaps nhỏ trước khi tìm contour
+    if close_kernel > 0:
+        kernel = np.ones((close_kernel, close_kernel), np.uint8)
+        binary_mask = cv2.morphologyEx(binary_mask, cv2.MORPH_CLOSE, kernel)
     
-    # Create clean mask
+    contours, _ = cv2.findContours(
+        binary_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
+    )
+    
     clean_mask = np.zeros_like(binary_mask)
-    
-    # Keep only contours above minimum area
     for contour in contours:
         area = cv2.contourArea(contour)
         if area >= min_area:
-            cv2.drawContours(clean_mask, [contour], -1, 255, thickness=cv2.FILLED)
+            cv2.drawContours(
+                clean_mask, [contour], -1, 255, 
+                thickness=cv2.FILLED
+            )
     
     return clean_mask > 0
 
 
-def join_model_data(base, model, mask_path):
-    # Remove noise pixels from mask first
-    clean_mask = remove_noise_pixels(mask_path)
-    base[clean_mask] = model[clean_mask]
+def join_model_data(base, model, mask_path, min_noise_area=100):
+    mask_img = Image.open(mask_path).convert('RGBA')
+    mask_array = np.array(mask_img).astype(np.float32)
+    mask_alpha = mask_array[:, :, 3] / 255.0
+    
+    # Chỉ dùng noise removal để zero out các blob nhỏ li ti
+    # KHÔNG convert toàn bộ về binary
+    noise_mask = remove_noise_pixels(mask_path, min_area=min_noise_area)
+    mask_alpha[~noise_mask] = 0.0  # zero out noise pixels, giữ nguyên phần còn lại
+    
+    for ch in range(base.shape[2]):
+        base_ch = base[:, :, ch]
+        model_ch = model[:, :, ch]
+        base_nan = np.isnan(base_ch)
+
+        # Winner-takes-all: không blend tọa độ, chỉ pick coord từ 1 model.
+        # Masks gần như binary (>99.5%), warp liên tục tại seam (<1px diff)
+        # nên pick coord từ model nào có alpha cao hơn là đủ chính xác.
+        blended = np.where(
+            base_nan,
+            np.where(mask_alpha > 0, model_ch, np.nan),
+            np.where(mask_alpha > 0.5, model_ch, base_ch)
+        )
+        base[:, :, ch] = blended
 
 
 def resize_model(model_data, mask, target_size):
     """
     Resize với soft edge để tránh jagged artifacts
     """
-    from scipy.ndimage import distance_transform_edt, gaussian_filter
     
     # 1. Fill NaN
     filled_data = model_data.copy()
@@ -295,80 +313,252 @@ def resize_model(model_data, mask, target_size):
     return resized
 
 
-def process_design_parts(side_name, parts):
-    original_size = (1000, 1000)
-    base_model = np.full((*original_size, 2), np.nan, dtype=np.float32)
-    base_mask = Image.new('RGBA', original_size, (0, 0, 0, 0))
-    
+def _make_100x100_json(model_1000: np.ndarray, target: int = 100) -> np.ndarray:
+    """
+    Downsample merged 1000×1000 warp grid → 100×100 cho JS WebGL renderer.
+    NaN pixels (ngoài garment silhouette) được fill bằng nearest-valid neighbor
+    trước khi subsample để tránh artifact khi JS clamp NaN về 0.
+    """
+    H, W = model_1000.shape[:2]
+    filled = model_1000.copy()
+
+    for ch in range(2):
+        channel = filled[:, :, ch]
+        nan_mask = np.isnan(channel)
+        if nan_mask.any() and (~nan_mask).any():
+            indices = distance_transform_edt(nan_mask, return_distances=False, return_indices=True)
+            filled[:, :, ch] = channel[tuple(indices)]
+
+    # Lấy đều target×target điểm từ grid đã fill
+    row_idx = np.linspace(0, H - 1, target, dtype=int)
+    col_idx = np.linspace(0, W - 1, target, dtype=int)
+    return filled[np.ix_(row_idx, col_idx)]
+
+
+def _get_figure_key(part_name: str) -> str:
+    """
+    Trích figure key từ tên part.
+    Tên 5 segment: Front_Back.Front_Back.Back.Design.Back_4  → "Back"
+    Tên 4 segment: Front.Front.Design.Front_2                → "default"
+    """
+    segs = part_name.split(".")
+    return segs[2] if len(segs) == 5 else "default"
+
+
+def _merge_parts_for_figure(file_key: str, parts: list) -> dict:
+    """
+    Collect per-part warp data for a figure.
+
+    No coordinate merging — each part keeps its own TPS grid.
+    Rendering uses per-part warp + Porter-Duff composite to avoid
+    coordinate-discontinuity / jagged-edge artifacts at seam regions.
+    """
+    out_dir   = f"{ROOT_DIR}/{PREFIX}/optimized"
+    orig_size = (1000, 1000)
+
+    merged_alpha = np.zeros(orig_size, dtype=np.float32)
+    parts_data   = []
+
     for part in parts:
-        model_path = part["warp_info"]["model"]
+        npy_path  = part["warp_info"]["model"]
         mask_path = part["mask_path"]
-        
-        model_data = np.load(model_path, allow_pickle=True)
-        print(f"Original model shape: {model_data.shape}")
-        
-        join_model_data(base_model, model_data, mask_path)
-        
-        img = Image.open(mask_path).convert('RGBA')
-        base_mask.paste(img, (0, 0), img)
-    
-    base_mask_array = np.array(base_mask)
-    alpha_channel = base_mask_array[:, :, 3]
-    mask = alpha_channel > 0
-    
-    # base_model = resize_model(base_model, mask, (100, 100))
-    
-    model_path = f"{ROOT_DIR}/{PREFIX}/optimized/{side_name.lower()}.warp.npy"
-    np.save(model_path, base_model)
-    
-    mask_path = f"{ROOT_DIR}/{PREFIX}/optimized/{side_name.lower()}.warp_mask.png"
-    base_mask.save(mask_path)
-    
-    json_path = f"{ROOT_DIR}/{PREFIX}/optimized/{side_name.lower()}.warp.json"
-    with open(json_path, 'w') as f:
-        json.dump(base_model.tolist(), f, separators=(",", ":"))
-    
+
+        part_alpha   = np.array(Image.open(mask_path).convert('RGBA'))[:, :, 3] / 255.0
+        merged_alpha = part_alpha + merged_alpha * (1.0 - part_alpha)
+
+        part_npy = np.load(npy_path, allow_pickle=True)
+        grid_100 = _make_100x100_json(part_npy)
+        safe_name     = re.sub(r'[^A-Za-z0-9._-]', '_', part["name"])
+        json_path     = f"{out_dir}/{safe_name}.100x100.json"
+        with open(json_path, 'w') as f:
+            json.dump(grid_100.tolist(), f, separators=(",", ":"))
+
+        parts_data.append({
+            "model":      npy_path,   # full 1000×1000 npy (Python renderer)
+            "model_json": json_path,  # 100×100 json       (JS renderer)
+            "mask_path":  mask_path,
+        })
+
+    merged_alpha = np.clip(merged_alpha, 0.0, 1.0)
+    mask_arr = np.zeros((*orig_size, 4), dtype=np.uint8)
+    mask_arr[:, :, 3] = (merged_alpha * 255).astype(np.uint8)
+    merged_mask_path = f"{out_dir}/{file_key}.warp_mask.png"
+    Image.fromarray(mask_arr, 'RGBA').save(merged_mask_path)
+
     return {
-        "name": f"{side_name}.Design",
-        "side": "front",
-        # "mask_path": mask_path,
+        "name":      f"{file_key}.Design",
+        "side":      "front",
+        "mask_path": merged_mask_path,
         "warp_type": "warp_npy",
         "warp_info": {
-            "model": model_path,
-            "model_json": json_path,
-            "artwork_width": 3000,
+            "parts":          parts_data,
+            "artwork_width":  3000,
             "artwork_height": 3000,
         },
         "effects": [],
-        "fill": 100,
-        "opacity": 100
+        "fill":    100,
+        "opacity": 100,
     }
+
+
+def process_design_parts(side_name, parts) -> list:
+    """
+    Group design parts by figure, merge mỗi figure độc lập.
+    Trả list vì 1 view có thể có nhiều figure (ví dụ Front_Back có Back + Front).
+    Parts của 2 figure khác nhau không được gộp chung vì chúng map tới
+    các vùng hoàn toàn khác nhau của artwork (cách nhau 1000+ px).
+    """
+    # Group theo figure key, giữ thứ tự xuất hiện
+    groups: dict[str, list] = {}
+    for part in parts:
+        key = _get_figure_key(part["name"])
+        groups.setdefault(key, []).append(part)
+
+    result = []
+    for figure_key, fig_parts in groups.items():
+        if figure_key == "default":
+            file_key = side_name.lower()
+        else:
+            file_key = f"{side_name.lower()}.{figure_key.lower()}"
+        result.append(_merge_parts_for_figure(file_key, fig_parts))
+
+    return result
+
+
+def _upsample_grid_seam_aware(grid_small: np.ndarray, canvas_size: tuple) -> np.ndarray:
+    """
+    Upsample sparse grid (e.g. 100×100) lên canvas_size dùng hybrid interpolation:
+    - INTER_LINEAR cho vùng smooth bên trong panel (cho kết quả mượt)
+    - INTER_NEAREST cho vùng seam giữa các panel (tránh blend tọa độ từ 2 panel khác nhau)
+
+    Seam được detect trực tiếp từ grid: hai grid cell cạnh nhau có coordinate jump
+    lớn hơn SEAM_THRESH là seam — không cần lưu thêm metadata vào JSON.
+
+    Tại sao không dùng INTER_LINEAR đơn thuần: tại seam giữa 2 panel, tọa độ nhảy
+    đột ngột (có thể 680px trong artwork), bilinear blend 2 điểm đó tạo ra tọa độ
+    hoàn toàn sai → màu sắc sai trong vùng ~10px quanh mỗi seam.
+    """
+    W, H = canvas_size  # cv2 convention: (width, height)
+
+    # Detect seam edges: adjacent cells differ > threshold in normalized coords
+    # 0.02 normalized = 20px in 1000px artwork, đủ để bắt panel seams (~680px)
+    # mà không trigger trên smooth warp variations (thường < 0.005)
+    SEAM_THRESH = 0.02
+    dx = np.abs(np.diff(grid_small, axis=1)).max(axis=2)  # (GH, GW-1)
+    dy = np.abs(np.diff(grid_small, axis=0)).max(axis=2)  # (GH-1, GW)
+
+    # Mark cả 2 cells hai bên mỗi seam edge là seam-adjacent
+    GH, GW = grid_small.shape[:2]
+    cell_seam = np.zeros((GH, GW), dtype=np.uint8)
+    cell_seam[:, :-1] |= (dx > SEAM_THRESH)
+    cell_seam[:, 1:]  |= (dx > SEAM_THRESH)
+    cell_seam[:-1, :] |= (dy > SEAM_THRESH)
+    cell_seam[1:, :]  |= (dy > SEAM_THRESH)
+
+    grid_linear  = cv2.resize(grid_small, (W, H), interpolation=cv2.INTER_LINEAR)
+    grid_nearest = cv2.resize(grid_small, (W, H), interpolation=cv2.INTER_NEAREST)
+    # Upsample seam mask với NEAREST để giữ sharp boundary
+    seam_pixels  = cv2.resize(cell_seam,  (W, H), interpolation=cv2.INTER_NEAREST).astype(bool)
+
+    return np.where(seam_pixels[:, :, None], grid_nearest, grid_linear)
+
+
+def warp_image_per_parts(image, parts: list, artwork_size: tuple, warped_size: tuple,
+                         use_json: bool = False) -> Image.Image:
+    """
+    Per-part warp + Porter-Duff alpha composite.
+
+    Each sub-part is warped independently using its own TPS grid (smooth, no
+    discontinuities) and composited onto the canvas in order.  This is the
+    only approach that avoids seam / jagged-edge artifacts at part boundaries.
+
+    Root cause of artifacts with coordinate-merging:
+      Adjacent canvas pixels assigned to different parts have artwork
+      coordinates that can differ by 1 000+ px → huge color jump → staircase.
+
+    use_json=False  → load full 1000×1000 npy (high quality, slower)
+    use_json=True   → load 100×100 JSON then bilinear-upsample (fast, JS-parity)
+    """
+    if isinstance(image, Image.Image):
+        image = np.array(image)
+
+    W, H = warped_size
+    resized_img = cv2.resize(image, artwork_size, cv2.INTER_LANCZOS4)
+
+    canvas = np.zeros((H, W, 4), dtype=np.float32)
+
+    for part in parts:
+        # ── load mask (shared by both branches below) ────────────────────
+        mask_a = np.array(Image.open(part["mask_path"]).convert("RGBA"))[:, :, 3].astype(
+            np.float32) / 255.0
+
+        # ── load grid ────────────────────────────────────────────────────
+        if use_json:
+            with open(part["model_json"]) as f:
+                grid = np.array(json.load(f), dtype=np.float32)
+            # Bilinear upsample: smooth within the part, but the pre-filled
+            # NaN zone in the 100×100 JSON bleeds wrong coordinates into
+            # boundary pixels after interpolation.
+            # Fix: re-NaN outside the mask then fill from within-mask only.
+            grid = cv2.resize(grid, (W, H), interpolation=cv2.INTER_LINEAR)
+            outside = mask_a < 0.1
+            for ch in range(2):
+                grid[:, :, ch][outside] = np.nan
+            for ch in range(2):
+                nan_m = np.isnan(grid[:, :, ch])
+                if nan_m.any() and (~nan_m).any():
+                    idx = distance_transform_edt(nan_m, return_distances=False,
+                                                 return_indices=True)
+                    grid[:, :, ch] = grid[:, :, ch][tuple(idx)]
+        else:
+            grid = np.load(part["model"], allow_pickle=True)
+            # Fill NaN outside part boundary so cv2.remap never reads garbage
+            for ch in range(2):
+                nan_m = np.isnan(grid[:, :, ch])
+                if nan_m.any() and (~nan_m).any():
+                    idx = distance_transform_edt(nan_m, return_distances=False,
+                                                 return_indices=True)
+                    grid[:, :, ch] = grid[:, :, ch][tuple(idx)]
+
+        # ── warp ─────────────────────────────────────────────────────────
+        mapx, mapy = tps.tps_grid_to_remap(grid, artwork_size)
+        warped = cv2.remap(resized_img, mapx, mapy, cv2.INTER_CUBIC).astype(np.float32)
+
+        # ── apply part mask ───────────────────────────────────────────────
+        warped[:, :, 3] = np.minimum(warped[:, :, 3], mask_a * 255.0)
+
+        # ── Porter-Duff "src over dst" ────────────────────────────────────
+        src_a = warped[:, :, 3:4] / 255.0
+        dst_a = canvas[:, :, 3:4] / 255.0
+        out_a = src_a + dst_a * (1.0 - src_a)
+        safe_a = np.where(out_a > 1e-6, out_a, 1.0)
+        canvas[:, :, :3] = (
+            warped[:, :, :3] * src_a +
+            canvas[:, :, :3] * dst_a * (1.0 - src_a)
+        ) / safe_a
+        canvas[:, :, 3] = out_a[:, :, 0] * 255.0
+
+    return Image.fromarray(np.clip(canvas, 0, 255).astype(np.uint8))
 
 
 def warp_image(image, model_path, artwork_size, warped_size):
     """
-    Warp image using TPS (Thin Plate Spline) transformation
-    
-    Args:
-        image: numpy array or PIL Image
-        model_path: path to the .npy model file
-        artwork_size: tuple (width, height) for artwork
-        warped_size: tuple (width, height) for final warped image
-    
-    Returns:
-        PIL Image of warped result
+    Warp image using TPS (Thin Plate Spline) transformation.
+    Hỗ trợ cả .npy (full grid) và .json (sparse grid, được upsample bằng
+    bilinear interpolation để match cách JS WebGL renderer xử lý).
     """
-    # Convert PIL Image to numpy array if needed
     if isinstance(image, Image.Image):
         image = np.array(image)
-    
-    # Resize the image with high-quality interpolation
+
     resized_img = cv2.resize(image, artwork_size, cv2.INTER_LANCZOS4)
-    
-    # Load the transformation grid
-    grid = np.load(model_path, allow_pickle=True)
-    
-    # Generate the remapping coordinates
+
+    if model_path.endswith('.json'):
+        with open(model_path) as f:
+            grid = np.array(json.load(f), dtype=np.float32)
+        grid = _upsample_grid_seam_aware(grid, warped_size)
+    else:
+        grid = np.load(model_path, allow_pickle=True)
+
     mapx, mapy = tps.tps_grid_to_remap(grid, artwork_size)
     
     # Apply the warping transformation
@@ -414,33 +604,23 @@ def apply_blend_mode(base, overlay, blend_mode):
     return result
 
 
-def generate_mockup(mockup_info, artwork_path, output_path, mask_mode=False):
+def generate_mockup(mockup_info, artwork_path, output_path, mask_mode=False, use_json_model=False):
     """
-    Generate a mockup image from mockup_info and artwork
-    
-    Args:
-        mockup_info: dict containing mockup configuration
-        artwork_path: path to artwork image
-        output_path: path to save the generated mockup
-        mask_mode: if True, apply mask to warped design parts
+    Generate a mockup image from mockup_info and artwork.
+    use_json_model=True → dùng warp_info['model_json'] (100x100) thay vì 'model' (1000x1000 npy).
     """
     size = mockup_info.get('size', {'width': 1000, 'height': 1000})
     canvas_size = (size['width'], size['height'])
-    
-    # Create base canvas
+
     canvas = Image.new('RGBA', canvas_size, (0, 0, 0, 0))
-    
-    # Load artwork once
     artwork = Image.open(artwork_path).convert('RGBA')
-    
+
     for part in mockup_info['parts']:
         part_name = part['name']
-        
-        # Handle background and model parts
+
         if 'image_path' in part and part.get('warp_type') != 'warp_npy':
             layer = Image.open(part['image_path']).convert('RGBA')
-            
-            # Apply blend mode if specified
+
             if 'blend_mode' in part and part['blend_mode'] != 'normal':
                 canvas_array = np.array(canvas)
                 layer_array = np.array(layer)
@@ -448,39 +628,99 @@ def generate_mockup(mockup_info, artwork_path, output_path, mask_mode=False):
                 canvas = Image.fromarray(blended, 'RGBA')
             else:
                 canvas.paste(layer, (0, 0), layer)
-        
-        # Handle design/warp parts
+
         elif part.get('warp_type') == 'warp_npy':
-            warp_info = part['warp_info']
-            model_path = warp_info['model']
+            warp_info    = part['warp_info']
             artwork_size = (warp_info['artwork_width'], warp_info['artwork_height'])
-            
-            # Warp the artwork
-            warped = warp_image(artwork, model_path, artwork_size, canvas_size)
-            
-            # Apply mask if specified and in mask mode (original version)
-            if mask_mode and 'mask_path' in part:
-                mask = Image.open(part['mask_path']).convert('RGBA')
-                warped_array = np.array(warped)
-                mask_array = np.array(mask)
-                
-                # Use mask alpha as the design alpha
-                warped_array[:, :, 3] = np.minimum(warped_array[:, :, 3], mask_array[:, :, 3])
-                warped = Image.fromarray(warped_array, 'RGBA')
-            
-            # Apply opacity if specified
+
+            if 'parts' in warp_info:
+                # Per-part warp + composite — seam-free (new format)
+                warped = warp_image_per_parts(
+                    artwork, warp_info['parts'], artwork_size, canvas_size,
+                    use_json=use_json_model,
+                )
+            elif 'model' in warp_info:
+                # Legacy: single merged npy (may have seam artifacts)
+                warped = warp_image(artwork, warp_info['model'], artwork_size, canvas_size)
+                if mask_mode and 'mask_path' in part:
+                    mask        = Image.open(part['mask_path']).convert('RGBA')
+                    warped_arr  = np.array(warped)
+                    warped_arr[:, :, 3] = np.minimum(
+                        warped_arr[:, :, 3],
+                        np.array(mask)[:, :, 3]
+                    )
+                    warped = Image.fromarray(warped_arr, 'RGBA')
+            else:
+                continue
+
+            # Apply opacity
             opacity = part.get('opacity', 100)
             if opacity < 100:
-                warped_array = np.array(warped)
-                warped_array[:, :, 3] = (warped_array[:, :, 3] * opacity / 100).astype(np.uint8)
-                warped = Image.fromarray(warped_array, 'RGBA')
-            
-            # Composite onto canvas
+                warped_arr       = np.array(warped)
+                warped_arr[:, :, 3] = (warped_arr[:, :, 3] * opacity / 100).astype(np.uint8)
+                warped = Image.fromarray(warped_arr, 'RGBA')
+
             canvas.paste(warped, (0, 0), warped)
     
     # Save the result
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     canvas.save(output_path)
+
+
+class ResourceMonitor:
+    """Track peak CPU and memory usage during a timed block."""
+
+    def __init__(self, interval: float = 0.1):
+        self._proc = psutil.Process()
+        self._interval = interval
+        self._thread = None
+        self._stop = threading.Event()
+        self.peak_mem_mb: float = 0.0
+        self.cpu_samples: list = []
+        self._cpu_times_start = None
+        self._wall_start: float = 0.0
+
+    def start(self):
+        self._stop.clear()
+        self.peak_mem_mb = 0.0
+        self.cpu_samples = []
+        self._cpu_times_start = self._proc.cpu_times()
+        self._wall_start = time.time()
+
+        def _poll():
+            while not self._stop.is_set():
+                try:
+                    mem = self._proc.memory_info().rss / 1024 / 1024
+                    cpu = self._proc.cpu_percent(interval=None)
+                    if mem > self.peak_mem_mb:
+                        self.peak_mem_mb = mem
+                    self.cpu_samples.append(cpu)
+                except psutil.Error:
+                    pass
+                self._stop.wait(self._interval)
+
+        # Prime cpu_percent so first sample is meaningful
+        self._proc.cpu_percent(interval=None)
+        self._thread = threading.Thread(target=_poll, daemon=True)
+        self._thread.start()
+
+    def stop(self) -> dict:
+        self._stop.set()
+        if self._thread:
+            self._thread.join(timeout=2)
+        ct_end = self._proc.cpu_times()
+        ct_start = self._cpu_times_start
+        cpu_user  = ct_end.user  - ct_start.user
+        cpu_sys   = ct_end.system - ct_start.system
+        wall      = time.time() - self._wall_start
+        avg_cpu   = float(np.mean(self.cpu_samples)) if self.cpu_samples else 0.0
+        return {
+            "peak_mem_mb":  round(self.peak_mem_mb, 1),
+            "cpu_user_s":   round(cpu_user, 3),
+            "cpu_sys_s":    round(cpu_sys, 3),
+            "avg_cpu_pct":  round(avg_cpu, 1),
+            "wall_s":       round(wall, 3),
+        }
 
 
 def count_warp_parts(mockup_infos):
@@ -493,83 +733,91 @@ def count_warp_parts(mockup_infos):
     return total_warp_parts
 
 
-def generate_mockups_from_config(mockup_infos, config_type, artwork_dir, output_base_dir, log_file):
+def generate_mockups_from_config(mockup_infos, config_type, artwork_dir, output_base_dir, log_file,
+                                 use_json_model=False):
     """
-    Generate mockups from a specific configuration (original or optimized)
-    
-    Args:
-        mockup_infos: dict containing mockup configuration
-        config_type: str - 'original' or 'optimized'
-        artwork_dir: path to artwork directory
-        output_base_dir: base output directory
-        log_file: file handle for logging
-    
-    Returns:
-        tuple: (total_time, mockup_count, individual_times, warp_parts_count)
+    Generate mockups from a specific configuration (original or optimized).
+    use_json_model=True → dùng model_json (100x100) thay vì model npy (1000x1000).
     """
-    # Count warp parts
     warp_parts_count = count_warp_parts(mockup_infos)
-    
+
     msg = f"\n{'='*60}\nGenerating {config_type.upper()} mockups\n{'='*60}"
     print(msg)
     log_file.write(msg + "\n")
-    
+
     msg = f"Configuration: {len(mockup_infos['mockup_infos'])} mockup views, {warp_parts_count} warp parts total"
     print(msg)
     log_file.write(msg + "\n")
-    
+
     mockup_output_dir = os.path.join(output_base_dir, config_type)
-    
+
     # Get all artwork files
     artwork_files = [f for f in os.listdir(artwork_dir) if f.endswith(('.png', '.jpg', '.jpeg'))]
-    
+
     if not artwork_files:
         msg = f"No artwork files found in {artwork_dir}"
         print(msg)
         log_file.write(msg + "\n")
-        return 0, 0, [], warp_parts_count
-    
+        return 0, 0, [], warp_parts_count, {}
+
+    monitor = ResourceMonitor()
+    monitor.start()
+
     total_start_time = time.time()
     mockup_count = 0
     individual_times = []
-    
-    # mask_mode is True for original (uses individual masks), False for optimized
-    mask_mode = (config_type == 'original')
-    
+
+    mask_mode = True
+
     for artwork_file in artwork_files:
         artwork_path = os.path.join(artwork_dir, artwork_file)
         artwork_name = os.path.splitext(artwork_file)[0]
-        
+
         msg = f"\nProcessing artwork: {artwork_file}"
         print(msg)
         log_file.write(msg + "\n")
-        
+
         for mockup_info in mockup_infos['mockup_infos']:
             mockup_name = mockup_info['name']
             output_filename = f"{artwork_name}_{mockup_name}.png"
             output_path = os.path.join(mockup_output_dir, output_filename)
-            
+
             mockup_start = time.time()
             msg = f"  Generating: {mockup_name}..."
             print(msg, end=" ")
             log_file.write(msg)
-            
-            generate_mockup(mockup_info, artwork_path, output_path, mask_mode)
-            
+
+            generate_mockup(mockup_info, artwork_path, output_path, mask_mode, use_json_model)
+
             mockup_duration = time.time() - mockup_start
             individual_times.append(mockup_duration)
             msg = f"✓ ({mockup_duration:.3f}s)"
             print(msg)
             log_file.write(" " + msg + "\n")
             mockup_count += 1
-    
+
     total_time = time.time() - total_start_time
-    
-    msg = f"\n{'='*60}\n{config_type.upper()} Summary:\n  Total mockups: {mockup_count}\n  Warp parts per mockup: {warp_parts_count}\n  Total warp operations: {mockup_count * warp_parts_count}\n  Total time: {total_time:.3f}s\n  Average time per mockup: {total_time/mockup_count:.3f}s\n  Output directory: {mockup_output_dir}\n{'='*60}"
+    res = monitor.stop()
+
+    msg = (
+        f"\n{'='*60}\n{config_type.upper()} Summary:\n"
+        f"  Total mockups: {mockup_count}\n"
+        f"  Warp parts per mockup: {warp_parts_count}\n"
+        f"  Total warp operations: {mockup_count * warp_parts_count}\n"
+        f"  Total time: {total_time:.3f}s\n"
+        f"  Average time per mockup: {total_time/mockup_count:.3f}s\n"
+        f"  Output directory: {mockup_output_dir}\n"
+        f"  --- Resource Usage ---\n"
+        f"  Peak memory:    {res['peak_mem_mb']:.1f} MB\n"
+        f"  CPU time:       {res['cpu_user_s']:.3f}s user + {res['cpu_sys_s']:.3f}s sys\n"
+        f"  Avg CPU usage:  {res['avg_cpu_pct']:.1f}%\n"
+        f"  CPU efficiency: {(res['cpu_user_s'] + res['cpu_sys_s']) / res['wall_s'] * 100:.1f}% of wall time\n"
+        f"{'='*60}"
+    )
     print(msg)
     log_file.write(msg + "\n")
-    
-    return total_time, mockup_count, individual_times, warp_parts_count
+
+    return total_time, mockup_count, individual_times, warp_parts_count, res
 
 
 def generate_comparison_chart(original_time, optimized_time, original_times, optimized_times,
@@ -675,43 +923,76 @@ def generate_comparison_chart(original_time, optimized_time, original_times, opt
 
 
 def process_for_side(mockup_info):
+    """
+    Rebuild mockup_info preserving per-figure compositing order:
+      BG → [figure_1: model → colors → design → fx] → [figure_2: ...] → ...
+
+    In multi-figure views (e.g. Front_Back), each figure has its own model photo,
+    design warp, and effect layers. Mixing them breaks compositing (e.g. Back effects
+    applied on top of Front design instead of before it).
+    """
     side_name = mockup_info["name"]
 
+    out_dir = f"{ROOT_DIR}/{PREFIX}/optimized"
+    if not os.path.exists(out_dir):
+        os.mkdir(out_dir)
+
+    PART_TYPES = {"Design", "Colors", "fx"}
+
     bg_parts = []
-    model_parts = []
-    color_parts = []
-    design_parts = []
-    effect_parts = []
-    
-    for index, part in enumerate(mockup_info["parts"]):
-        part_name_splitted = part["name"].split(".")
-        
-        if part_name_splitted[1] == "BG":
+    figures = {}       # {figure_key: {'model': [], 'color': [], 'design': [], 'effect': []}}
+    figure_order = []  # preserves first-seen order
+
+    for part in mockup_info["parts"]:
+        segs = part["name"].split(".")
+
+        if segs[1] == "BG":
             bg_parts.append(part)
-        elif part_name_splitted[2] == "Colors" or (len(part_name_splitted) == 5 and part_name_splitted[3] == "Colors"):
-            color_parts.append(part)
-        elif part_name_splitted[2] == "Design" or (len(part_name_splitted) == 5 and part_name_splitted[3] == "Design"):
-            design_parts.append(part)
-        elif part_name_splitted[2] == "fx" or (len(part_name_splitted) == 5 and part_name_splitted[3] == "fx"):
-            effect_parts.append(part)
+            continue
+
+        # Determine figure key and part type
+        if len(segs) == 5:
+            # Multi-figure: SideName.SideName.FigureKey.PartType.PartName
+            figure_key = segs[2]
+            part_type  = segs[3]
+        elif len(segs) == 4 and segs[2] not in PART_TYPES:
+            # Multi-figure model: SideName.SideName.FigureKey.PartName
+            figure_key = segs[2]
+            part_type  = "model"
+        elif len(segs) == 4 and segs[2] in PART_TYPES:
+            # Single-figure design/fx: SideName.SideName.PartType.PartName
+            figure_key = "default"
+            part_type  = segs[2]
         else:
-            model_parts.append(part)
-            
-    dir = f"{ROOT_DIR}/{PREFIX}/optimized"
-    if not os.path.exists(dir):
-        os.mkdir(dir)
-    
-    model_part = process_model_parts(side_name, model_parts)
-    design_part = process_design_parts(side_name, design_parts)
-    
-    mockup_info["parts"] = [
-        *bg_parts,
-        model_part,
-        *color_parts,
-        design_part,
-        *effect_parts,
-    ]
-    
+            # Single-figure model (3 segments) or fallback
+            figure_key = "default"
+            part_type  = "model"
+
+        if figure_key not in figures:
+            figures[figure_key] = {"model": [], "color": [], "design": [], "effect": []}
+            figure_order.append(figure_key)
+
+        bucket = {"Colors": "color", "Design": "design", "fx": "effect"}.get(part_type, "model")
+        figures[figure_key][bucket].append(part)
+
+    result_parts = list(bg_parts)
+
+    for figure_key in figure_order:
+        fig = figures[figure_key]
+        file_key = side_name.lower() if figure_key == "default" else f"{side_name.lower()}.{figure_key.lower()}"
+        model_name = side_name if figure_key == "default" else f"{side_name}.{figure_key}"
+
+        if fig["model"]:
+            result_parts.append(process_model_parts(model_name, fig["model"]))
+
+        result_parts.extend(fig["color"])
+
+        if fig["design"]:
+            result_parts.append(_merge_parts_for_figure(file_key, fig["design"]))
+
+        result_parts.extend(fig["effect"])
+
+    mockup_info["parts"] = result_parts
     return mockup_info
 
 
@@ -749,50 +1030,59 @@ def run_mockup_generation():
             optimized_mockup_infos = json.load(f)
         
         # Generate original mockups
-        original_time, original_count, original_times, original_warp_count = generate_mockups_from_config(
-            original_mockup_infos,
-            'original',
-            artwork_dir,
-            mockup_output_base_dir,
-            log_file
-        )
-        
-        # Generate optimized mockups
-        optimized_time, optimized_count, optimized_times, optimized_warp_count = generate_mockups_from_config(
-            optimized_mockup_infos,
-            'optimized',
-            artwork_dir,
-            mockup_output_base_dir,
-            log_file
-        )
-        
+        original_time, original_count, original_times, original_warp_count, orig_res = \
+            generate_mockups_from_config(
+                original_mockup_infos, 'original',
+                artwork_dir, mockup_output_base_dir, log_file
+            )
+
+        # Generate optimized mockups (npy 1000x1000)
+        optimized_time, optimized_count, optimized_times, optimized_warp_count, opt_res = \
+            generate_mockups_from_config(
+                optimized_mockup_infos, 'optimized',
+                artwork_dir, mockup_output_base_dir, log_file
+            )
+
+        # Generate optimized mockups (json 100x100) — JS-renderer parity
+        opt100_time, opt100_count, opt100_times, opt100_warp_count, opt100_res = \
+            generate_mockups_from_config(
+                optimized_mockup_infos, 'optimized_100x100',
+                artwork_dir, mockup_output_base_dir, log_file,
+                use_json_model=True
+            )
+
         # Final comparison
-        comparison_text = f"\n{'='*60}\nFINAL COMPARISON\n{'='*60}\n"
-        comparison_text += f"Original:\n  Mockups: {original_count}\n  Warp parts per mockup: {original_warp_count}\n"
-        comparison_text += f"  Total warp operations: {original_count * original_warp_count}\n"
-        comparison_text += f"  Total time: {original_time:.3f}s\n"
-        comparison_text += f"  Avg time/mockup: {original_time/original_count:.3f}s\n\n"
-        comparison_text += f"Optimized:\n  Mockups: {optimized_count}\n  Warp parts per mockup: {optimized_warp_count}\n"
-        comparison_text += f"  Total warp operations: {optimized_count * optimized_warp_count}\n"
-        comparison_text += f"  Total time: {optimized_time:.3f}s\n"
-        comparison_text += f"  Avg time/mockup: {optimized_time/optimized_count:.3f}s\n\n"
-        
+        def _row(label, parts, t, count, res):
+            cpu_total  = res['cpu_user_s'] + res['cpu_sys_s']
+            efficiency = cpu_total / res['wall_s'] * 100 if res['wall_s'] > 0 else 0
+            return (
+                f"{label} ({parts} warp parts/view):\n"
+                f"  Total time: {t:.3f}s  Avg: {t/count:.3f}s\n"
+                f"  Peak memory:   {res['peak_mem_mb']:.1f} MB\n"
+                f"  CPU time:      {res['cpu_user_s']:.3f}s user + {res['cpu_sys_s']:.3f}s sys\n"
+                f"  Avg CPU usage: {res['avg_cpu_pct']:.1f}%  "
+                f"(efficiency {efficiency:.1f}%)\n\n"
+            )
+
+        comparison_text  = f"\n{'='*60}\nFINAL COMPARISON\n{'='*60}\n"
+        comparison_text += _row("Original",               original_warp_count,  original_time,  original_count,  orig_res)
+        comparison_text += _row("Optimized npy 1000x1000", optimized_warp_count, optimized_time, optimized_count, opt_res)
+        comparison_text += _row("Optimized json 100x100",  opt100_warp_count,    opt100_time,    opt100_count,    opt100_res)
+
         if original_time > 0:
-            speedup = original_time / optimized_time
-            time_saved = original_time - optimized_time
-            warp_reduction = original_warp_count - optimized_warp_count
-            comparison_text += f"Performance Improvement:\n"
-            comparison_text += f"  Speedup: {speedup:.2f}x faster\n"
-            comparison_text += f"  Time saved: {time_saved:.3f}s ({time_saved/original_time*100:.1f}%)\n"
-            comparison_text += f"  Warp parts reduced: {warp_reduction} ({warp_reduction/original_warp_count*100:.1f}%)\n"
-        
-        comparison_text += "="*60 + "\n"
-        
+            comparison_text += "Speedup vs original:\n"
+            comparison_text += (f"  npy 1000x1000: {original_time/optimized_time:.2f}x"
+                                f"  (parts reduced {original_warp_count-optimized_warp_count}/{original_warp_count})\n")
+            comparison_text += f"  json 100x100:  {original_time/opt100_time:.2f}x\n"
+            comparison_text += "Memory saving (peak):\n"
+            comparison_text += f"  npy 1000x1000: {orig_res['peak_mem_mb'] - opt_res['peak_mem_mb']:+.1f} MB\n"
+            comparison_text += f"  json 100x100:  {orig_res['peak_mem_mb'] - opt100_res['peak_mem_mb']:+.1f} MB\n"
+
+        comparison_text += "=" * 60 + "\n"
         print(comparison_text)
         log_file.write(comparison_text)
-        
         print(f"\n✓ Performance log saved to: {log_path}")
-    
+
     # Generate comparison chart
     chart_path = os.path.join(mockup_output_base_dir, "performance_comparison.png")
     generate_comparison_chart(original_time, optimized_time, original_times, optimized_times,
@@ -810,7 +1100,7 @@ async def main():
     for mockup_info in mockup_infos['mockup_infos']:
         mockup_info = process_for_side(mockup_info)
     
-    output_path = os.path.joinDIR(f"{ROOT_DIR}/{PREFIX}", "mockup_infos.optimized.json")
+    output_path = os.path.join(f"{ROOT_DIR}/{PREFIX}", "mockup_infos.optimized.json")
     with open(output_path, 'w') as f:
         json.dump(mockup_infos, f, indent=2)
     
